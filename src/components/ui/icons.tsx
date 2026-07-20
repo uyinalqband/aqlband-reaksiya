@@ -141,3 +141,15 @@ export function TrashIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function UsersIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="9" cy="8" r="3.2" />
+      <path d="M2.8 19c.6-3.2 3.1-5 6.2-5s5.6 1.8 6.2 5" />
+      <circle cx="17" cy="8.5" r="2.6" />
+      <path d="M15.5 4.2c1.4-.4 2.9.2 3.6 1.5.7 1.3.4 2.9-.7 3.9" />
+      <path d="M16.5 14.2c2.4.4 4.1 2 4.6 4.6" />
+    </svg>
+  );
+}
