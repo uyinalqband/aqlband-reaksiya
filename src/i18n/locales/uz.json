@@ -1,0 +1,103 @@
+{
+  "app": {
+    "name": "AqlBand Reaksiya",
+    "tagline": "Reaksiya tezligingizni sinang"
+  },
+  "common": {
+    "loading": "Yuklanmoqda...",
+    "back": "Orqaga",
+    "close": "Yopish",
+    "ms": "ms",
+    "attempts_one": "{{count}} urinish",
+    "attempts_other": "{{count}} urinish"
+  },
+  "home": {
+    "greeting": "Salom, {{name}}",
+    "greetingGuest": "Xush kelibsiz",
+    "subtitle": "Signalni ko'ring — imkon qadar tez bosing. Har millisekund hisobga kiradi.",
+    "playCta": "O'ynash",
+    "statBest": "Eng yaxshisi",
+    "statAverage": "O'rtacha",
+    "statAttempts": "Urinishlar",
+    "noStatsYet": "Hali statistika yo'q. Birinchi o'yinni boshlang!",
+    "historyTitle": "So'nggi urinishlar",
+    "historyEmpty": "Bu yerda o'yin tarixingiz ko'rinadi",
+    "howItWorks": "Qanday ishlaydi",
+    "step1Title": "Boshlang",
+    "step1Desc": "\"O'ynash\" tugmasini bosing va ekranga tayyor turing",
+    "step2Title": "Kuting",
+    "step2Desc": "Doira to'q binafsha rangda — hali bosmang",
+    "step3Title": "Zarba bering",
+    "step3Desc": "Doira yashil rangga aylanganda darhol bosing",
+    "statWorldRank": "Jahon reytingi"
+  },
+  "game": {
+    "prepareTitle": "Tayyorlaning",
+    "prepareDesc": "Doira yashil rangga aylanganda ekranni bosing",
+    "waiting": "Kuting...",
+    "armedHint": "Hali emas — signalni kuting",
+    "goHint": "HOZIR BOSING!",
+    "tooSoonTitle": "Juda erta!",
+    "tooSoonDesc": "Signal chiqishidan oldin bosdingiz. Yashil rangni kuting.",
+    "tooSoonCta": "Qayta urinish",
+    "timeoutTitle": "Vaqt tugadi",
+    "timeoutDesc": "Signal chiqdi, lekin ulgurmadingiz.",
+    "tapAnywhere": "Ekranning istalgan joyiga bosing",
+    "countdownLabel": "Signal kutilmoqda"
+  },
+  "result": {
+    "title": "Natijangiz",
+    "newBest": "Yangi rekord!",
+    "shareCta": "Do'stni musobaqaga chaqirish",
+    "playAgainCta": "Qayta o'ynash",
+    "homeCta": "Bosh sahifa",
+    "percentileText": "Siz o'yinchilarning {{percent}}%dan tezsiz",
+    "tier": {
+      "lightning": "Chaqmoq",
+      "sharp": "O'tkir",
+      "quick": "Tezkor",
+      "steady": "Barqaror",
+      "casual": "Osoyishta"
+    },
+    "tierDesc": {
+      "lightning": "Inson reflekslari chegarasida",
+      "sharp": "Ajoyib reaksiya tezligi",
+      "quick": "O'rtachadan yaxshiroq",
+      "steady": "Yaxshi natija, mashq qiling",
+      "casual": "Mashq bilan yaxshilanadi"
+    },
+    "rankImproved": "Siz #{{from}} dan #{{to}} ga ko‘tarildingiz!"
+  },
+  "compare": {
+    "title": "Natijalarni solishtirish",
+    "you": "Siz",
+    "opponent": "{{name}}",
+    "won": "G'alaba qozondingiz!",
+    "lost": "Bu safar mag'lub bo'ldingiz",
+    "tie": "Durrang!",
+    "challengeCta": "Javob berish",
+    "diffFaster": "{{ms}} ms tezroq"
+  },
+  "share": {
+    "title": "Musobaqaga chaqiring",
+    "message": "Mening reaksiya vaqtim {{time}} ms. Meni yenga olasizmi?",
+    "shareButton": "Telegram orqali ulashish",
+    "copyLink": "Havolani nusxalash",
+    "copied": "Nusxalandi"
+  },
+  "settings": {
+    "title": "Sozlamalar",
+    "language": "Til",
+    "sound": "Ovoz effektlari",
+    "haptics": "Tebranish",
+    "resetStats": "Statistikani tozalash",
+    "resetConfirm": "Barcha natijalar o'chiriladi. Davom etasizmi?",
+    "resetConfirmCta": "Ha, tozalash",
+    "cancel": "Bekor qilish",
+    "version": "Versiya {{version}}"
+  },
+  "errors": {
+    "generic": "Nimadir xato ketdi. Qayta urinib ko'ring.",
+    "notInTelegram": "Ilova Telegram ichida ochilishi kerak."
+  }
+}
