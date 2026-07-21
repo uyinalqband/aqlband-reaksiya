@@ -1,4 +1,4 @@
-import { GameCard } from '@/components/games/GameCard';
+import { GameCard } from '@/components/game/GameCard';
 import { useGameStatsStore, getBestValue } from '@/store/gameStatsStore';
 
 import { useEffect, useMemo, useState } from 'react';
