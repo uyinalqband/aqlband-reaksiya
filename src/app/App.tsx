@@ -20,6 +20,10 @@ import { checkpoint } from '@/lib/debug';
 import { useTelegramUser } from '@/hooks/useTelegramUser';
 import { useEnsureUser } from '@/hooks/useEnsureUser';
 
+import { EmojiFindScreen } from '@/screens/games/EmojiFindScreen';
+import { NumberMemoryScreen } from '@/screens/games/NumberMemoryScreen';
+import { StroopTestScreen } from '@/screens/games/StroopTestScreen';
+
 /** The four bottom-tab root screens — no Telegram BackButton, no back padding gap; BottomNav renders below them. */
 const TAB_ROOT_PATHS = new Set(['/', '/leaderboard', '/profile', '/settings']);
 
@@ -56,6 +60,9 @@ function AnimatedRoutes() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<HomeScreen />} />
             <Route path="/play" element={<PlayScreen />} />
+            <Route path="/games/emoji" element={<EmojiFindScreen />} />
+<Route path="/games/number-memory" element={<NumberMemoryScreen />} />
+<Route path="/games/stroop" element={<StroopTestScreen />} />
             <Route path="/result" element={<ResultScreen />} />
             <Route path="/leaderboard" element={<LeaderboardScreen />} />
             <Route path="/profile" element={<ProfileScreen />} />
