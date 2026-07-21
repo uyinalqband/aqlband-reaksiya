@@ -3,6 +3,9 @@ import { createClient } from '@supabase/supabase-js';
 const rawUrl = import.meta.env.VITE_SUPABASE_URL;
 const rawAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+console.log("SUPABASE URL =", rawUrl);
+console.log("SUPABASE ANON KEY =", rawAnonKey);
+
 export const isSupabaseConfigured = Boolean(rawUrl && rawAnonKey);
 
 if (!isSupabaseConfigured) {
