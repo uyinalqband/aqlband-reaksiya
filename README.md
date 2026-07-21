@@ -212,4 +212,4 @@ Wrangler CLI (`npx wrangler pages deploy dist`).
 
 ## License
 
-Proprietary — © AqlBand. All rights reserved.
+Proprietary — © AqlBand 2026. All rights reserved.
