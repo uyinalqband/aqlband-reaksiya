@@ -54,6 +54,17 @@ export function HomeScreen() {
     };
   }, [telegramId, attempts.length]); // refetch after a new attempt is played (attempts.length changes)
 
+  const gameAttempts = useGameStatsStore((s) => s.attemptsByGame);
+const hydrateGameStats = useGameStatsStore((s) => s.hydrate);
+
+useEffect(() => {
+  void hydrateGameStats();
+}, [hydrateGameStats]);
+
+const emojiBest = getBestValue(gameAttempts['emoji-find'] ?? [], true);
+const memoryBest = getBestValue(gameAttempts['number-memory'] ?? [], false);
+const stroopBest = getBestValue(gameAttempts['stroop-test'] ?? [], false);
+  
   const hasStats = snapshot.totalAttempts > 0;
 
   const handlePlayWithFriend = async () => {
