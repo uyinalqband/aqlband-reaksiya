@@ -1,3 +1,6 @@
+import { GameCard } from '@/components/games/GameCard';
+import { useGameStatsStore, getBestValue } from '@/store/gameStatsStore';
+
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
