@@ -314,20 +314,32 @@ function sanitizeAttempt(value: unknown): GameAttemptInput {
   }
 
   const valid =
-    (gameId === 'reaction' && metric === 'duration_ms' && roundedValue >= 80 && roundedValue <= 5_000) ||
+    (gameId === 'reaction' && metric === 'duration_ms' && roundedValue >= 80 && roundedValue <= 10_000) ||
     (gameId === 'duel-reaction' && metric === 'duration_ms' && roundedValue >= 80 && roundedValue <= 5_000) ||
-    (gameId === 'emoji-find' && metric === 'duration_ms' && roundedValue >= 100 && roundedValue <= 60_000) ||
-    (gameId === 'number-memory' && metric === 'correct_count' && roundedValue >= 0 && roundedValue <= 5) ||
-    (gameId === 'stroop-test' && metric === 'score' && roundedValue >= 0 && roundedValue <= 20_000);
+    (gameId === 'emoji-find' && metric === 'duration_ms' && roundedValue >= 80 && roundedValue <= 60_000) ||
+    (gameId === 'number-memory' && metric === 'duration_ms' && roundedValue >= 80 && roundedValue <= 60_000) ||
+    (gameId === 'stroop-test' && metric === 'duration_ms' && roundedValue >= 80 && roundedValue <= 60_000) ||
+    // Legacy local history remains readable/syncable, but rule v2 awards no XP for these old metrics.
+    (gameId === 'number-memory' && metric === 'correct_count' && roundedValue >= 0 && roundedValue <= 10) ||
+    (gameId === 'stroop-test' && metric === 'score' && roundedValue >= 0 && roundedValue <= 100_000);
 
   if (!valid) throw new ApiError('O‘yin natijasi ruxsat etilgan chegaradan tashqarida.', 400, 'invalid_attempt');
 
   const rawMeta = sanitizeMeta(raw.meta);
+  const commonSoloMeta = [
+    'difficulty',
+    'rounds',
+    'selectedRounds',
+    'survival',
+    'correct',
+    'errors',
+    'timeouts',
+  ];
   const allowedMetaKeys: Record<string, string[]> = {
-    reaction: ['mode'],
-    'emoji-find': ['errors', 'rounds'],
-    'number-memory': ['rounds', 'digits'],
-    'stroop-test': ['correct', 'errors', 'timeouts', 'averageMs', 'rounds'],
+    reaction: [...commonSoloMeta, 'mode', 'isNewBest'],
+    'emoji-find': commonSoloMeta,
+    'number-memory': [...commonSoloMeta, 'digits'],
+    'stroop-test': [...commonSoloMeta, 'averageMs'],
     'duel-reaction': [],
   };
   const meta = Object.fromEntries(
