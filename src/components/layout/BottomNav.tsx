@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { HomeIcon, TrophyIcon, ProfileIcon, SettingsIcon } from '@/components/ui/icons';
+import { HomeIcon, SettingsIcon } from '@/components/ui/icons';
 import { haptics } from '@/lib/telegram';
 
 interface TabDef {
@@ -23,8 +23,6 @@ export function BottomNav() {
 
   const tabs: TabDef[] = [
     { path: '/', label: t('nav.home'), icon: (a) => <HomeIcon {...iconProps(a)} /> },
-    { path: '/leaderboard', label: t('nav.leaderboard'), icon: (a) => <TrophyIcon {...iconProps(a)} /> },
-    { path: '/profile', label: t('nav.profile'), icon: (a) => <ProfileIcon {...iconProps(a)} /> },
     { path: '/settings', label: t('nav.settings'), icon: (a) => <SettingsIcon {...iconProps(a)} /> },
   ];
 
