@@ -1,6 +1,3 @@
-import { GameCard } from '@/components/game/GameCard';
-import { useGameStatsStore, getBestValue } from '@/store/gameStatsStore';
-
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -8,12 +5,12 @@ import { motion } from 'framer-motion';
 import { Screen } from '@/components/layout/Screen';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { StatCard } from '@/components/ui/StatCard';
-import { PlayIcon, BoltIcon, HistoryIcon, ShareIcon } from '@/components/ui/icons';
+import { BoltIcon, ChevronRightIcon, HistoryIcon, ShareIcon } from '@/components/ui/icons';
 import { useTelegramUser } from '@/hooks/useTelegramUser';
 import { useStatsStore, computeStatsSnapshot } from '@/store/statsStore';
 import { useChallengeStore } from '@/store/challengeStore';
 import { useOnlineStore } from '@/store/onlineStore';
+import { useGameStatsStore, getBestValue } from '@/store/gameStatsStore';
 import { getUserRank } from '@/services/leaderboardService';
 import { createDuel } from '@/services/duelService';
 import { isSupabaseConfigured } from '@/lib/supabaseClient';
@@ -30,10 +27,17 @@ export function HomeScreen() {
   const challenge = useChallengeStore((s) => s.challenge);
   const telegramId = useOnlineStore((s) => s.telegramId);
 
+  const gameAttempts = useGameStatsStore((s) => s.attemptsByGame);
+  const hydrateGameStats = useGameStatsStore((s) => s.hydrate);
+
   const [worldRank, setWorldRank] = useState<number | null>(null);
   const [rankLoading, setRankLoading] = useState(false);
   const [creatingDuel, setCreatingDuel] = useState(false);
   const [duelError, setDuelError] = useState<string | null>(null);
+
+  useEffect(() => {
+    void hydrateGameStats();
+  }, [hydrateGameStats]);
 
   useEffect(() => {
     if (!isSupabaseConfigured || telegramId === null) return;
@@ -52,20 +56,17 @@ export function HomeScreen() {
     return () => {
       cancelled = true;
     };
-  }, [telegramId, attempts.length]); // refetch after a new attempt is played (attempts.length changes)
+  }, [telegramId, attempts.length]);
 
-  const gameAttempts = useGameStatsStore((s) => s.attemptsByGame);
-const hydrateGameStats = useGameStatsStore((s) => s.hydrate);
+  const emojiBest = getBestValue(gameAttempts['emoji-find'] ?? [], true);
+  const memoryBest = getBestValue(gameAttempts['number-memory'] ?? [], false);
+  const stroopBest = getBestValue(gameAttempts['stroop-test'] ?? [], false);
 
-useEffect(() => {
-  void hydrateGameStats();
-}, [hydrateGameStats]);
-
-const emojiBest = getBestValue(gameAttempts['emoji-find'] ?? [], true);
-const memoryBest = getBestValue(gameAttempts['number-memory'] ?? [], false);
-const stroopBest = getBestValue(gameAttempts['stroop-test'] ?? [], false);
-  
-  const hasStats = snapshot.totalAttempts > 0;
+  const totalGamesPlayed =
+    snapshot.totalAttempts +
+    (gameAttempts['emoji-find']?.length ?? 0) +
+    (gameAttempts['number-memory']?.length ?? 0) +
+    (gameAttempts['stroop-test']?.length ?? 0);
 
   const handlePlayWithFriend = async () => {
     if (!user || !isSupabaseConfigured || creatingDuel) return;
@@ -76,7 +77,7 @@ const stroopBest = getBestValue(gameAttempts['stroop-test'] ?? [], false);
       shareChallenge(BOT_USERNAME, `duel_${duel.id}`, "Reaksiya bo'yicha musobaqalashamizmi? Havolani bosing!");
       navigate('/duel', { state: { duelId: duel.id, role: 'host' } });
     } catch (error) {
-      setDuelError(error instanceof Error ? error.message : "Nimadir xato ketdi.");
+      setDuelError(error instanceof Error ? error.message : 'Nimadir xato ketdi.');
     } finally {
       setCreatingDuel(false);
     }
@@ -85,25 +86,25 @@ const stroopBest = getBestValue(gameAttempts['stroop-test'] ?? [], false);
   return (
     <Screen>
       <div>
-        <p className="text-sm text-mist-500">{t('app.tagline')}</p>
-        <h1 className="mt-1 font-display text-2xl font-bold text-mist-100">
-          {user ? t('home.greeting', { name: user.firstName }) : t('home.greetingGuest')}
-        </h1>
+        <h1 className="font-display text-2xl font-bold text-mist-100">{user ? user.firstName : 'AqlBand'}</h1>
+        <p className="mt-1 text-sm text-mist-500">Bugun nima o'ynaymiz?</p>
       </div>
 
       {challenge && (
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="mt-5 rounded-2xl border border-gold-500/30 bg-gold-500/10 px-4 py-3.5"
+          className="mt-5 rounded-2xl border border-gold-500/30 bg-gold-500/10 px-4 py-3"
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-500/20 text-gold-400">
-              <BoltIcon width={18} height={18} />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-500/20 text-gold-400">
+              <BoltIcon width={16} height={16} />
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-mist-100">{challenge.n}</p>
-              <p className="font-mono text-xs text-gold-400">{formatMs(challenge.t)} {t('common.ms')}</p>
+              <p className="font-mono text-xs text-gold-400">
+                {formatMs(challenge.t)} {t('common.ms')}
+              </p>
             </div>
             <Button size="sm" variant="secondary" onClick={() => navigate('/play')}>
               {t('compare.challengeCta')}
@@ -112,61 +113,72 @@ const stroopBest = getBestValue(gameAttempts['stroop-test'] ?? [], false);
         </motion.div>
       )}
 
-      <div className="mt-8 flex flex-col items-center">
-        <motion.div
-          animate={{ y: [0, -6, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          className="relative flex h-44 w-44 items-center justify-center rounded-full border-2 border-violet-500/40 bg-gradient-to-b from-ink-700 to-ink-800 shadow-glow"
-        >
-          <BoltIcon width={56} height={56} className="text-gold-400" />
-        </motion.div>
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        <GameTile
+          emoji="⚡"
+          title="Reaksiya"
+          description="Signalni kuting, tez bosing"
+          bestLabel={snapshot.best !== null ? `${formatMs(snapshot.best)} ms` : '—'}
+          onClick={() => navigate('/play')}
+        />
+        <GameTile
+          emoji="🍎"
+          title="Emoji"
+          description="Emojini toping"
+          bestLabel={emojiBest !== null ? `${Math.round(emojiBest)} ms` : '—'}
+          onClick={() => navigate('/games/emoji')}
+        />
+        <GameTile
+          emoji="🧠"
+          title="Memory"
+          description="Sonni eslab qoling"
+          bestLabel={memoryBest !== null ? `${memoryBest}/5` : '—'}
+          onClick={() => navigate('/games/number-memory')}
+        />
+        <GameTile
+          emoji="🌈"
+          title="Stroop"
+          description="Rangga qarab bosing"
+          bestLabel={stroopBest !== null ? `${stroopBest} ball` : '—'}
+          onClick={() => navigate('/games/stroop')}
+        />
+      </div>
 
-        <p className="mt-6 max-w-xs text-center text-sm leading-relaxed text-mist-500">{t('home.subtitle')}</p>
-
-        <Button className="mt-7 w-full max-w-xs" size="lg" icon={<PlayIcon width={20} height={20} />} onClick={() => navigate('/play')}>
-          {t('home.playCta')}
-        </Button>
-
-        {isSupabaseConfigured && user && (
+      {isSupabaseConfigured && user && (
+        <div className="mt-3">
           <Button
-            className="mt-3 w-full max-w-xs"
+            className="w-full"
             size="md"
             variant="secondary"
             icon={<ShareIcon width={16} height={16} />}
             disabled={creatingDuel}
             onClick={() => void handlePlayWithFriend()}
           >
-            {creatingDuel ? 'Yaratilmoqda...' : "Do'st bilan"}
+            {creatingDuel ? 'Yaratilmoqda...' : "Do'st bilan o'ynash"}
           </Button>
-        )}
-        {duelError && <p className="mt-2 text-center text-xs text-signal-early">{duelError}</p>}
-      </div>
+          {duelError && <p className="mt-2 text-center text-xs text-signal-early">{duelError}</p>}
+        </div>
+      )}
 
-      <div className="mt-8 grid grid-cols-2 gap-3">
-        <StatCard label={t('home.statBest')} value={snapshot.best !== null ? formatMs(snapshot.best) : '—'} accent />
-        <StatCard label={t('home.statAverage')} value={snapshot.average !== null ? formatMs(snapshot.average) : '—'} />
-        <StatCard label={t('home.statAttempts')} value={String(snapshot.totalAttempts)} />
-        <StatCard
-          label={t('home.statWorldRank')}
+      <div className="mt-6 grid grid-cols-4 gap-2.5">
+        <MiniStat label="Best" value={snapshot.best !== null ? formatMs(snapshot.best) : '—'} accent />
+        <MiniStat label="O'rtacha" value={snapshot.average !== null ? formatMs(snapshot.average) : '—'} />
+        <MiniStat label="O'yinlar" value={String(totalGamesPlayed)} />
+        <MiniStat
+          label="Reyting"
           value={
-            !isSupabaseConfigured
-              ? '—'
-              : rankLoading
-                ? '…'
-                : worldRank !== null
-                  ? `#${worldRank}`
-                  : '—'
+            !isSupabaseConfigured ? '—' : rankLoading ? '…' : worldRank !== null ? `#${worldRank}` : '—'
           }
           accent
         />
       </div>
 
-      <div className="mt-8">
+      <div className="mt-7">
         <div className="mb-3 flex items-center gap-2 text-mist-300">
-          <HistoryIcon width={16} height={16} />
+          <HistoryIcon width={15} height={15} />
           <h2 className="text-sm font-semibold uppercase tracking-wide">{t('home.historyTitle')}</h2>
         </div>
-        {hasStats ? (
+        {snapshot.totalAttempts > 0 ? (
           <Card padded={false} className="divide-y divide-ink-600/50">
             {attempts.slice(0, 5).map((attempt) => (
               <div key={attempt.id} className="flex items-center justify-between px-4 py-3">
@@ -180,46 +192,13 @@ const stroopBest = getBestValue(gameAttempts['stroop-test'] ?? [], false);
             ))}
           </Card>
         ) : (
-          <p className="rounded-xl border border-dashed border-ink-600 px-4 py-5 text-center text-sm text-mist-500">
+          <p className="rounded-2xl border border-dashed border-ink-600 px-4 py-5 text-center text-sm text-mist-500">
             {t('home.noStatsYet')}
           </p>
         )}
       </div>
 
-
-      <div className="mt-8">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-mist-300">
-          Boshqa o'yinlar
-        </h2>
-        <div className="grid grid-cols-2 gap-3">
-          <GameCard
-            emoji="🍎"
-            title="Emojini top"
-            bestLabel="Eng yaxshi"
-            bestValue={emojiBest !== null ? `${Math.round(emojiBest)} ms` : '—'}
-            accentBorderClassName="border-l-green-500"
-            onClick={() => navigate('/games/emoji')}
-          />
-          <GameCard
-            emoji="🧠"
-            title="Sonni eslab qol"
-            bestLabel="Eng yaxshi"
-            bestValue={memoryBest !== null ? `${memoryBest}/5` : '—'}
-            accentBorderClassName="border-l-blue-500"
-            onClick={() => navigate('/games/number-memory')}
-          />
-          <GameCard
-            emoji="🌈"
-            title="Rang testi"
-            bestLabel="Eng yaxshi"
-            bestValue={stroopBest !== null ? `${stroopBest} ball` : '—'}
-            accentBorderClassName="border-l-pink-500"
-            onClick={() => navigate('/games/stroop')}
-          />
-        </div>
-      </div>
-
-      <div className="mt-8">
+      <div className="mt-7">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-mist-300">{t('home.howItWorks')}</h2>
         <div className="space-y-2.5">
           <HowStep n={1} title={t('home.step1Title')} desc={t('home.step1Desc')} />
@@ -228,6 +207,49 @@ const stroopBest = getBestValue(gameAttempts['stroop-test'] ?? [], false);
         </div>
       </div>
     </Screen>
+  );
+}
+
+function GameTile({
+  emoji,
+  title,
+  description,
+  bestLabel,
+  onClick,
+}: {
+  emoji: string;
+  title: string;
+  description: string;
+  bestLabel: string;
+  onClick: () => void;
+}) {
+  return (
+    <motion.button
+      whileTap={{ scale: 0.96 }}
+      onClick={onClick}
+      className="flex flex-col items-start gap-2 rounded-2xl border border-ink-600/60 bg-ink-800/80 p-4 text-left"
+    >
+      <div className="flex w-full items-start justify-between">
+        <span className="text-3xl leading-none">{emoji}</span>
+        <ChevronRightIcon width={16} height={16} className="mt-1 text-mist-700" />
+      </div>
+      <div>
+        <p className="font-display text-sm font-semibold text-mist-100">{title}</p>
+        <p className="mt-0.5 text-xs text-mist-500">{description}</p>
+      </div>
+      <p className="mt-0.5 font-mono text-xs font-semibold text-gold-400">{bestLabel}</p>
+    </motion.button>
+  );
+}
+
+function MiniStat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div className="flex h-[4.5rem] flex-col items-center justify-center rounded-xl border border-ink-600/60 bg-ink-800/80 px-1 text-center">
+      <span className={`font-mono text-base font-bold tabular-nums ${accent ? 'text-gold-400' : 'text-mist-100'}`}>
+        {value}
+      </span>
+      <span className="mt-1 text-[9px] font-medium uppercase tracking-wide text-mist-500">{label}</span>
+    </div>
   );
 }
 
