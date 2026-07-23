@@ -1,0 +1,28 @@
+AQLBAND FINAL PLATFORM — O'RNATISH
+
+1. ZIP faylni oching.
+2. GitHub repository ichidagi eski fayllarni tozalang.
+3. ZIP ichidagi aqlband-platform-final papkasining ICHIDAGI barcha fayllarni repository ildiziga joylang.
+4. Cloudflare Pages sozlamalari:
+   Build command: npm run build
+   Output directory: dist
+   Node.js: 22
+5. Cloudflare environment variables:
+   VITE_SUPABASE_URL=https://idocmxdydrwsizametwg.supabase.co
+   VITE_SUPABASE_ANON_KEY=<Supabase publishable/anon key>
+6. Supabase SQL Editor:
+   - Oldingi 0001-0009 migratsiyalar bajarilgan bo'lsa, faqat
+     supabase/migrations/0010_expand_game_catalog.sql faylini Run qiling.
+   - Yangi Supabase loyihasi bo'lsa, 0001 dan 0010 gacha tartib bilan Run qiling.
+7. Supabase Edge Functions > aqlband-api > Code:
+   supabase/functions/aqlband-api/index.ts kodini joylang va Deploy function bosing.
+8. Verify JWT with legacy secret: OFF.
+9. Supabase Secret:
+   TELEGRAM_BOT_TOKEN=<shu Mini Appni ochadigan bot tokeni>
+10. Deploy tugagach Telegram Mini Appni to'liq yopib qayta oching.
+
+MUHIM
+- node_modules ZIP ichiga kiritilmagan.
+- public/_redirects mavjud emas; Cloudflare infinite-loop ogohlantirishi bo'lmaydi.
+- O'yin tarixi maksimum 30 ta yozuv saqlaydi.
+- Yangi o'yinlar uchun server game_id va XP qoidalari 0010 migratsiyada qo'shilgan.
