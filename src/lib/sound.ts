@@ -49,4 +49,9 @@ export const sfx = {
     tone(660, 110, 'sine', 0.07);
     tone(990, 160, 'sine', 0.06, 100);
   },
+  /** Repeating attention cue for the two-player ready lobby. */
+  invite(): void {
+    tone(520, 120, 'sine', 0.055);
+    tone(760, 150, 'triangle', 0.05, 150);
+  },
 };
