@@ -1,0 +1,255 @@
+{
+  "app": {
+    "name": "AqlBand Reaksiya",
+    "tagline": "Test your reaction speed"
+  },
+  "common": {
+    "loading": "Loading...",
+    "back": "Back",
+    "close": "Close",
+    "ms": "ms",
+    "attempts_one": "{{count}} attempt",
+    "attempts_other": "{{count}} attempts",
+    "notFound": "Game not found"
+  },
+  "home": {
+    "greeting": "Hi, {{name}}",
+    "greetingGuest": "Welcome",
+    "subtitle": "Watch the signal — tap as fast as you can. Every millisecond counts.",
+    "playCta": "Play",
+    "statBest": "Best",
+    "statAverage": "Average",
+    "statAttempts": "Games",
+    "noStatsYet": "No stats yet. Start your first round!",
+    "historyTitle": "Recent attempts",
+    "historyEmpty": "Your game history will appear here",
+    "howItWorks": "How it works",
+    "step1Title": "Start",
+    "step1Desc": "Tap \"Play\" and get ready on the screen",
+    "step2Title": "Wait",
+    "step2Desc": "The circle is deep purple — don't tap yet",
+    "step3Title": "Strike",
+    "step3Desc": "Tap the instant the circle turns green",
+    "statWorldRank": "World rank",
+    "question": "What shall we play today?"
+  },
+  "game": {
+    "prepareTitle": "Get ready",
+    "prepareDesc": "Tap the screen the moment the circle turns green",
+    "waiting": "Waiting...",
+    "armedHint": "Not yet — wait for the signal",
+    "goHint": "TAP NOW!",
+    "tooSoonTitle": "Too soon!",
+    "tooSoonDesc": "You tapped before the signal. Wait for green.",
+    "tooSoonCta": "Try again",
+    "timeoutTitle": "Time's up",
+    "timeoutDesc": "The signal appeared, but you missed it.",
+    "tapAnywhere": "Tap anywhere on the screen",
+    "countdownLabel": "Waiting for signal"
+  },
+  "result": {
+    "title": "Your result",
+    "newBest": "New personal best!",
+    "shareCta": "Challenge a friend",
+    "playAgainCta": "Play again",
+    "homeCta": "Home",
+    "percentileText": "You're faster than {{percent}}% of players",
+    "tier": {
+      "lightning": "Lightning",
+      "sharp": "Sharp",
+      "quick": "Quick",
+      "steady": "Steady",
+      "casual": "Casual"
+    },
+    "tierDesc": {
+      "lightning": "At the edge of human reflexes",
+      "sharp": "Excellent reaction speed",
+      "quick": "Better than average",
+      "steady": "Solid result, keep practicing",
+      "casual": "Practice makes it faster"
+    },
+    "rankImproved": "You moved from #{{from}} to #{{to}}!"
+  },
+  "compare": {
+    "title": "Compare results",
+    "you": "You",
+    "opponent": "{{name}}",
+    "won": "You won!",
+    "lost": "You lost this round",
+    "tie": "It's a tie!",
+    "challengeCta": "Answer the challenge",
+    "diffFaster": "{{ms}} ms faster"
+  },
+  "share": {
+    "title": "Send a challenge",
+    "message": "My reaction time is {{time}} ms. Can you beat me?",
+    "shareButton": "Share via Telegram",
+    "copyLink": "Copy link",
+    "copied": "Copied"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "sound": "Sound effects",
+    "haptics": "Haptics",
+    "resetStats": "Reset statistics",
+    "resetConfirm": "All results will be deleted. Continue?",
+    "resetConfirmCta": "Yes, reset",
+    "cancel": "Cancel",
+    "version": "Version {{version}}"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "notInTelegram": "This app must be opened inside Telegram."
+  },
+  "nav": {
+    "home": "Home",
+    "leaderboard": "Ranking",
+    "profile": "Profile",
+    "settings": "Settings",
+    "notifications": "Alerts"
+  },
+  "setup": {
+    "rounds": "Rounds",
+    "survival": "Until failure",
+    "difficulty": "Difficulty",
+    "memorySize": "Memory size",
+    "shuffle": "Shuffle moves",
+    "howTo": "How to play",
+    "start": "Start game",
+    "friend": "Play with a friend"
+  },
+  "difficulty": {
+    "easy": {
+      "title": "Easy",
+      "description": "Larger elements and more time"
+    },
+    "medium": {
+      "title": "Medium",
+      "description": "Balanced standard mode"
+    },
+    "hard": {
+      "title": "Hard",
+      "description": "More distractors and less time"
+    },
+    "very-hard": {
+      "title": "Very hard",
+      "description": "Maximum speed and complexity"
+    },
+    "progressive": {
+      "title": "Progressive",
+      "description": "Difficulty increases each round"
+    }
+  },
+  "gameplay": {
+    "round": "Round",
+    "remember": "Remember the highlighted cells",
+    "repeat": "Repeat the pattern",
+    "start": "Start",
+    "stop": "Stop",
+    "roundsCompleted": "rounds completed"
+  },
+  "history": {
+    "title": "Game history",
+    "limit": "Latest 30 games",
+    "empty": "No games yet"
+  },
+  "profile": {
+    "title": "Profile",
+    "changeAvatar": "Change avatar",
+    "friends": "Friends",
+    "offline": "Online features are unavailable",
+    "delete": "Delete profile",
+    "deleting": "Deleting...",
+    "deleteConfirm": "Delete the profile and all related data?"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "clear": "Clear all",
+    "empty": "No notifications",
+    "accept": "Accept",
+    "reject": "Decline"
+  },
+  "games": {
+    "reaction": {
+      "title": "Reaction",
+      "description": "Wait for the signal and tap instantly.",
+      "instructions": "Wait for the signal and tap instantly.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "emoji": {
+      "title": "Emoji Find",
+      "description": "Find the target emoji among distractors.",
+      "instructions": "Find the target emoji among distractors.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "numberMemory": {
+      "title": "Number Memory",
+      "description": "Remember the number and choose it correctly.",
+      "instructions": "Remember the number and choose it correctly.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "stroop": {
+      "title": "Stroop Test",
+      "description": "Answer by the ink color, not the word.",
+      "instructions": "Answer by the ink color, not the word.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "ascending": {
+      "title": "Ascending Numbers",
+      "description": "Tap numbers from smallest to largest.",
+      "instructions": "Tap numbers from smallest to largest.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "odd": {
+      "title": "Odd One Out",
+      "description": "Spot the single different symbol.",
+      "instructions": "Spot the single different symbol.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "pattern": {
+      "title": "Pattern Memory",
+      "description": "Remember highlighted cells and repeat the pattern.",
+      "instructions": "Remember highlighted cells and repeat the pattern.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "goNoGo": {
+      "title": "Go / No-Go",
+      "description": "Tap on green; do not tap on red.",
+      "instructions": "Tap on green; do not tap on red.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "math": {
+      "title": "Mental Math",
+      "description": "Solve arithmetic problems quickly and accurately.",
+      "instructions": "Solve arithmetic problems quickly and accurately.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "sequence": {
+      "title": "Sequence Memory",
+      "description": "Remember the sequence and choose the correct continuation.",
+      "instructions": "Remember the sequence and choose the correct continuation.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "cards": {
+      "title": "Card Memory",
+      "description": "Open cards and match all pairs.",
+      "instructions": "Open cards and match all pairs.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "time": {
+      "title": "Time Estimation",
+      "description": "Estimate the requested interval without a visible timer.",
+      "instructions": "Estimate the requested interval without a visible timer.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "peripheral": {
+      "title": "Peripheral Vision",
+      "description": "Keep focus at the center and detect the outer target.",
+      "instructions": "Keep focus at the center and detect the outer target.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "twentyFour": {
+      "title": "24 Game",
+      "description": "Choose the expression that makes exactly 24.",
+      "instructions": "Choose the expression that makes exactly 24.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "nback": {
+      "title": "Dual N-Back",
+      "description": "Track visual positions and sounds from N steps earlier.",
+      "instructions": "Track visual positions and sounds from N steps earlier.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    },
+    "puzzle": {
+      "title": "15 Puzzle",
+      "description": "Slide tiles until numbers are ordered from 1 to 15.",
+      "instructions": "Slide tiles until numbers are ordered from 1 to 15.\n\nComplete each round accurately. Faster correct answers produce a better millisecond result."
+    }
+  }
+}

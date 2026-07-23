@@ -1,0 +1,255 @@
+{
+  "app": {
+    "name": "AqlBand Reaksiya",
+    "tagline": "Reaksiya tezligingizni sinang"
+  },
+  "common": {
+    "loading": "Yuklanmoqda...",
+    "back": "Orqaga",
+    "close": "Yopish",
+    "ms": "ms",
+    "attempts_one": "{{count}} urinish",
+    "attempts_other": "{{count}} urinish",
+    "notFound": "O‘yin topilmadi"
+  },
+  "home": {
+    "greeting": "Salom, {{name}}",
+    "greetingGuest": "Xush kelibsiz",
+    "subtitle": "Signalni ko'ring — imkon qadar tez bosing. Har millisekund hisobga kiradi.",
+    "playCta": "O'ynash",
+    "statBest": "Eng yaxshi",
+    "statAverage": "O‘rtacha",
+    "statAttempts": "O‘yinlar",
+    "noStatsYet": "Hali statistika yo'q. Birinchi o'yinni boshlang!",
+    "historyTitle": "So'nggi urinishlar",
+    "historyEmpty": "Bu yerda o'yin tarixingiz ko'rinadi",
+    "howItWorks": "Qanday ishlaydi",
+    "step1Title": "Boshlang",
+    "step1Desc": "\"O'ynash\" tugmasini bosing va ekranga tayyor turing",
+    "step2Title": "Kuting",
+    "step2Desc": "Doira to'q binafsha rangda — hali bosmang",
+    "step3Title": "Zarba bering",
+    "step3Desc": "Doira yashil rangga aylanganda darhol bosing",
+    "statWorldRank": "Jahon reytingi",
+    "question": "Bugun nima o‘ynaymiz?"
+  },
+  "game": {
+    "prepareTitle": "Tayyorlaning",
+    "prepareDesc": "Doira yashil rangga aylanganda ekranni bosing",
+    "waiting": "Kuting...",
+    "armedHint": "Hali emas — signalni kuting",
+    "goHint": "HOZIR BOSING!",
+    "tooSoonTitle": "Juda erta!",
+    "tooSoonDesc": "Signal chiqishidan oldin bosdingiz. Yashil rangni kuting.",
+    "tooSoonCta": "Qayta urinish",
+    "timeoutTitle": "Vaqt tugadi",
+    "timeoutDesc": "Signal chiqdi, lekin ulgurmadingiz.",
+    "tapAnywhere": "Ekranning istalgan joyiga bosing",
+    "countdownLabel": "Signal kutilmoqda"
+  },
+  "result": {
+    "title": "Natijangiz",
+    "newBest": "Yangi rekord!",
+    "shareCta": "Do'stni musobaqaga chaqirish",
+    "playAgainCta": "Qayta o'ynash",
+    "homeCta": "Bosh sahifa",
+    "percentileText": "Siz o'yinchilarning {{percent}}%dan tezsiz",
+    "tier": {
+      "lightning": "Chaqmoq",
+      "sharp": "O'tkir",
+      "quick": "Tezkor",
+      "steady": "Barqaror",
+      "casual": "Osoyishta"
+    },
+    "tierDesc": {
+      "lightning": "Inson reflekslari chegarasida",
+      "sharp": "Ajoyib reaksiya tezligi",
+      "quick": "O'rtachadan yaxshiroq",
+      "steady": "Yaxshi natija, mashq qiling",
+      "casual": "Mashq bilan yaxshilanadi"
+    },
+    "rankImproved": "Siz #{{from}} dan #{{to}} ga ko‘tarildingiz!"
+  },
+  "compare": {
+    "title": "Natijalarni solishtirish",
+    "you": "Siz",
+    "opponent": "{{name}}",
+    "won": "G'alaba qozondingiz!",
+    "lost": "Bu safar mag'lub bo'ldingiz",
+    "tie": "Durrang!",
+    "challengeCta": "Javob berish",
+    "diffFaster": "{{ms}} ms tezroq"
+  },
+  "share": {
+    "title": "Musobaqaga chaqiring",
+    "message": "Mening reaksiya vaqtim {{time}} ms. Meni yenga olasizmi?",
+    "shareButton": "Telegram orqali ulashish",
+    "copyLink": "Havolani nusxalash",
+    "copied": "Nusxalandi"
+  },
+  "settings": {
+    "title": "Sozlamalar",
+    "language": "Til",
+    "sound": "Ovoz effektlari",
+    "haptics": "Tebranish",
+    "resetStats": "Statistikani tozalash",
+    "resetConfirm": "Barcha natijalar o'chiriladi. Davom etasizmi?",
+    "resetConfirmCta": "Ha, tozalash",
+    "cancel": "Bekor qilish",
+    "version": "Versiya {{version}}"
+  },
+  "errors": {
+    "generic": "Nimadir xato ketdi. Qayta urinib ko'ring.",
+    "notInTelegram": "Ilova Telegram ichida ochilishi kerak."
+  },
+  "nav": {
+    "home": "Bosh sahifa",
+    "leaderboard": "Reyting",
+    "profile": "Profil",
+    "settings": "Sozlamalar",
+    "notifications": "Xabarlar"
+  },
+  "setup": {
+    "rounds": "Raundlar soni",
+    "survival": "Yutqazgungacha",
+    "difficulty": "Qiyinlik darajasi",
+    "memorySize": "Xotira hajmi",
+    "shuffle": "Aralashtirish yurishlari",
+    "howTo": "Qanday o‘ynaladi?",
+    "start": "O‘yinni boshlash",
+    "friend": "Do‘st bilan o‘ynash"
+  },
+  "difficulty": {
+    "easy": {
+      "title": "Oson",
+      "description": "Kattaroq elementlar va ko‘proq vaqt"
+    },
+    "medium": {
+      "title": "O‘rta",
+      "description": "Muvozanatli standart rejim"
+    },
+    "hard": {
+      "title": "Qiyin",
+      "description": "Ko‘proq chalg‘ituvchi va kamroq vaqt"
+    },
+    "very-hard": {
+      "title": "Juda qiyin",
+      "description": "Eng tez va murakkab rejim"
+    },
+    "progressive": {
+      "title": "Qiyinlashib boruvchi",
+      "description": "Har raundda qiyinlik oshadi"
+    }
+  },
+  "gameplay": {
+    "round": "Raund",
+    "remember": "Yongan kataklarni eslab qoling",
+    "repeat": "Naqshni takrorlang",
+    "start": "Boshlash",
+    "stop": "To‘xtatish",
+    "roundsCompleted": "raund yakunlandi"
+  },
+  "history": {
+    "title": "O‘yin tarixi",
+    "limit": "Oxirgi 30 ta o‘yin",
+    "empty": "Hali o‘yinlar yo‘q"
+  },
+  "profile": {
+    "title": "Profil",
+    "changeAvatar": "Avatarni o‘zgartirish",
+    "friends": "Do‘stlar",
+    "offline": "Onlayn funksiyalar mavjud emas",
+    "delete": "Profilni o‘chirish",
+    "deleting": "O‘chirilmoqda...",
+    "deleteConfirm": "Profil va unga tegishli barcha ma’lumotlar o‘chirilsinmi?"
+  },
+  "notifications": {
+    "title": "Xabarlar",
+    "clear": "Hammasini tozalash",
+    "empty": "Xabarlar yo‘q",
+    "accept": "Qabul qilish",
+    "reject": "Bekor qilish"
+  },
+  "games": {
+    "reaction": {
+      "title": "Reaksiya",
+      "description": "Signalni kuting va darhol bosing.",
+      "instructions": "Signalni kuting va darhol bosing.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "emoji": {
+      "title": "Emoji topish",
+      "description": "Kerakli emojini chalg‘ituvchilar orasidan toping.",
+      "instructions": "Kerakli emojini chalg‘ituvchilar orasidan toping.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "numberMemory": {
+      "title": "Raqam xotirasi",
+      "description": "Raqamni eslab qoling va to‘g‘ri tanlang.",
+      "instructions": "Raqamni eslab qoling va to‘g‘ri tanlang.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "stroop": {
+      "title": "Stroop testi",
+      "description": "So‘zga emas, yozuv rangiga qarab javob bering.",
+      "instructions": "So‘zga emas, yozuv rangiga qarab javob bering.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "ascending": {
+      "title": "O‘suvchi raqamlar",
+      "description": "Raqamlarni kichigidan kattasiga bosing.",
+      "instructions": "Raqamlarni kichigidan kattasiga bosing.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "odd": {
+      "title": "Ortiqchasini toping",
+      "description": "Boshqalardan farqli yagona belgini toping.",
+      "instructions": "Boshqalardan farqli yagona belgini toping.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "pattern": {
+      "title": "Naqsh xotirasi",
+      "description": "Yongan kataklarni eslab qolib, naqshni takrorlang.",
+      "instructions": "Yongan kataklarni eslab qolib, naqshni takrorlang.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "goNoGo": {
+      "title": "Go / No-Go",
+      "description": "Yashilda bosing, qizilda bosmang.",
+      "instructions": "Yashilda bosing, qizilda bosmang.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "math": {
+      "title": "Og‘zaki hisob",
+      "description": "Hisob misollarini tez va aniq yeching.",
+      "instructions": "Hisob misollarini tez va aniq yeching.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "sequence": {
+      "title": "Ketma-ketlik xotirasi",
+      "description": "Ketma-ketlikni eslab, to‘g‘ri davomini tanlang.",
+      "instructions": "Ketma-ketlikni eslab, to‘g‘ri davomini tanlang.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "cards": {
+      "title": "Kartalar xotirasi",
+      "description": "Kartalarni ochib, barcha juftliklarni toping.",
+      "instructions": "Kartalarni ochib, barcha juftliklarni toping.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "time": {
+      "title": "Vaqtni baholash",
+      "description": "Ko‘rinadigan taymersiz berilgan vaqt oralig‘ini baholang.",
+      "instructions": "Ko‘rinadigan taymersiz berilgan vaqt oralig‘ini baholang.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "peripheral": {
+      "title": "Periferik ko‘rish",
+      "description": "Markazga qarab turib, chetdagi nishonni aniqlang.",
+      "instructions": "Markazga qarab turib, chetdagi nishonni aniqlang.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "twentyFour": {
+      "title": "24 o‘yini",
+      "description": "Natijasi aniq 24 bo‘ladigan ifodani tanlang.",
+      "instructions": "Natijasi aniq 24 bo‘ladigan ifodani tanlang.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "nback": {
+      "title": "Dual N-Back",
+      "description": "Oldingi N qadamdagi joylashuv va tovushni kuzating.",
+      "instructions": "Oldingi N qadamdagi joylashuv va tovushni kuzating.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "puzzle": {
+      "title": "15 pazl",
+      "description": "Kataklarni surib, 1 dan 15 gacha tartiblang.",
+      "instructions": "Kataklarni surib, 1 dan 15 gacha tartiblang.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    }
+  }
+}
