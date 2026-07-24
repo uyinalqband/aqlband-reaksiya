@@ -1,0 +1,49 @@
+AQLBAND FINAL PLATFORM — ASOSIY O'ZGARISHLAR
+
+O'YINLAR
+1. Reaksiya
+2. Emoji Find
+3. Number Memory
+4. Stroop Test
+5. Ascending Numbers
+6. Odd One Out
+7. Pattern Memory
+8. Go / No-Go
+9. Mental Math
+10. Sequence Memory
+11. Card Memory
+12. Time Estimation
+13. Peripheral Vision Test
+14. 24 Game
+15. Dual N-Back
+16. 15 Puzzle
+
+ARXITEKTURA
+- src/components/games
+- src/features/games
+- src/features/games/reaction
+- src/features/games/session
+- src/screens/games
+- Markaziy src/features/games/catalog.ts katalogi
+- Yangi o'yin qo'shish uchun umumiy modul tizimi
+
+INTERFEYS
+- O'yin tarixi bosh sahifa va profildan olib tashlandi.
+- Eng yaxshi, O'rtacha yoki O'yinlar statistikasi bosilganda 30 ta batafsil tarix ochiladi.
+- Reyting pastki menyudan chiqarilib, bosh sahifadagi alohida statistika tugmasiga joylandi.
+- Pastki menyuga Xabarlar qo'shildi.
+- Profilga taklif qilingan avatarlar orasidan tanlash qo'shildi.
+- Profilning eng pastiga Profilni o'chirish tugmasi qo'shildi.
+- O'zbek, rus va ingliz tarjima to'plamlari kengaytirildi.
+
+XABARLAR
+- Do'stlik va o'yin chaqiruvlari bir xil kartada ko'rinadi.
+- Qabul qilish va Bekor qilish tugmalari bir xil.
+- Global sinxronlash har 5 soniyada tekshiradi.
+- Yangi xabar 20 soniya suzuvchi oynada ko'rinadi.
+- Xabar foydalanuvchi o'chirmaguncha Xabarlar bo'limida saqlanadi.
+
+SERVER
+- 0010_expand_game_catalog.sql yangi game_id cheklovlari va XP qoidalarini qo'shadi.
+- Edge Function yangi o'yinlarning duration_ms natijalarini tekshiradi va saqlaydi.
+- XP va unvon tizimi jami XP asosida ishlaydi.

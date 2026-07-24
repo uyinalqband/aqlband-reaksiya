@@ -1,0 +1,49 @@
+AQLBAND V2 — JOYLASHTIRISH TARTIBI
+
+MUHIM
+Bu ZIP kichik patch emas. Bu to'liq yangi repository.
+Eski repository ichiga ayrim fayllarni aralashtirib ko'chirmang.
+
+1. ZIP'ni oching.
+2. Yangi GitHub repository yarating.
+3. ZIP ichidagi AqlBand_V2_Complete papkasining ichidagi barcha fayllarni
+   yangi repository boshiga joylashtiring.
+4. Commit va Push qiling.
+
+CLOUDFLARE PAGES
+- Framework preset: Vite
+- Build command: npm run build
+- Build output: dist
+- Node: 22
+- Environment:
+  VITE_SUPABASE_URL
+  VITE_SUPABASE_ANON_KEY
+
+SUPABASE — MAVJUD LOYIHA
+- SQL Editor'da faqat:
+  supabase/migrations/0016_aqlband_v2_platform.sql
+  faylini Run qiling.
+- Oldingi 0001–0015 migratsiyalarni takrorlamang.
+
+SUPABASE — YANGI LOYIHA
+- 0001 dan 0016 gacha barcha migratsiyalarni tartib bilan Run qiling.
+
+EDGE FUNCTION
+- aqlband-api kodini:
+  supabase/functions/aqlband-api/index.ts
+  bilan to'liq almashtiring.
+- Deploy function bosing.
+- Legacy JWT verification: OFF.
+- Secrets:
+  TELEGRAM_BOT_TOKEN
+  SUPABASE_URL
+  SUPABASE_SERVICE_ROLE_KEY
+
+YAKUNIY SINOV
+1. Telegram Mini App'ni ikki akkauntda oching.
+2. Reytingli Shashka qidiruvini ikkala akkauntda boshlang.
+3. Ikkala tomon tayyor bo'lsin.
+4. G'alaba qilgan foydalanuvchining ELO'si oshishini tekshiring.
+5. Mag'lub foydalanuvchining ELO'si kamayishini tekshiring.
+6. Do'stlik Shashkasida ELO o'zgarmasligini tekshiring.
+7. Tarixda raqib, natija va rating delta ko'rinishini tekshiring.
