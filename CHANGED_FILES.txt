@@ -1,0 +1,10 @@
+package.json
+package-lock.json
+src/app/App.tsx
+src/features/games/catalog.ts
+src/features/games/session/config.ts
+src/screens/games/CognitiveGameScreen.tsx
+src/screens/games/EmojiFindScreen.tsx
+src/screens/games/NumberMemoryScreen.tsx
+src/screens/games/StroopTestScreen.tsx
+src/screens/games/TicTacToeScreen.tsx
