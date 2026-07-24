@@ -1,0 +1,499 @@
+{
+  "app": {
+    "name": "AqlBand Reaksiya",
+    "tagline": "Reaksiya tezligingizni sinang"
+  },
+  "common": {
+    "loading": "Yuklanmoqda...",
+    "back": "Orqaga",
+    "close": "Yopish",
+    "ms": "ms",
+    "attempts_one": "{{count}} urinish",
+    "attempts_other": "{{count}} urinish",
+    "notFound": "O‘yin topilmadi",
+    "game": "O‘yin",
+    "you": "siz",
+    "yes": "Ha",
+    "no": "Yo‘q"
+  },
+  "home": {
+    "greeting": "Salom, {{name}}",
+    "greetingGuest": "Xush kelibsiz",
+    "subtitle": "Signalni ko'ring — imkon qadar tez bosing. Har millisekund hisobga kiradi.",
+    "playCta": "O'ynash",
+    "statBest": "Eng yaxshi",
+    "statAverage": "O‘rtacha",
+    "statAttempts": "O‘yinlar",
+    "noStatsYet": "Hali statistika yo'q. Birinchi o'yinni boshlang!",
+    "historyTitle": "So'nggi urinishlar",
+    "historyEmpty": "Bu yerda o'yin tarixingiz ko'rinadi",
+    "howItWorks": "Qanday ishlaydi",
+    "step1Title": "Boshlang",
+    "step1Desc": "\"O'ynash\" tugmasini bosing va ekranga tayyor turing",
+    "step2Title": "Kuting",
+    "step2Desc": "Doira to'q binafsha rangda — hali bosmang",
+    "step3Title": "Zarba bering",
+    "step3Desc": "Doira yashil rangga aylanganda darhol bosing",
+    "statWorldRank": "Jahon reytingi",
+    "question": "Bugun nima o‘ynaymiz?",
+    "bestLeaderboardTitle": "Eng yaxshi natijalar",
+    "yourPosition": "Sizning o‘rningiz",
+    "youAreAlreadyInTop": "Siz bu ro‘yxatda allaqachon ko‘rinib turibsiz.",
+    "notRankedYet": "Hali bu o‘yin bo‘yicha reytingga kirmagansiz.",
+    "noGameLeaderboard": "Bu o‘yin bo‘yicha reyting hali bo‘sh."
+  },
+  "game": {
+    "prepareTitle": "Tayyorlaning",
+    "prepareDesc": "Doira yashil rangga aylanganda ekranni bosing",
+    "waiting": "Kuting...",
+    "armedHint": "Hali emas — signalni kuting",
+    "goHint": "HOZIR BOSING!",
+    "tooSoonTitle": "Juda erta!",
+    "tooSoonDesc": "Signal chiqishidan oldin bosdingiz. Yashil rangni kuting.",
+    "tooSoonCta": "Qayta urinish",
+    "timeoutTitle": "Vaqt tugadi",
+    "timeoutDesc": "Signal chiqdi, lekin ulgurmadingiz.",
+    "tapAnywhere": "Ekranning istalgan joyiga bosing",
+    "countdownLabel": "Signal kutilmoqda"
+  },
+  "result": {
+    "title": "Natijangiz",
+    "newBest": "Yangi rekord!",
+    "shareCta": "Do'stni musobaqaga chaqirish",
+    "playAgainCta": "Qayta o'ynash",
+    "homeCta": "Bosh sahifa",
+    "percentileText": "Siz o'yinchilarning {{percent}}%dan tezsiz",
+    "tier": {
+      "lightning": "Chaqmoq",
+      "sharp": "O'tkir",
+      "quick": "Tezkor",
+      "steady": "Barqaror",
+      "casual": "Osoyishta"
+    },
+    "tierDesc": {
+      "lightning": "Inson reflekslari chegarasida",
+      "sharp": "Ajoyib reaksiya tezligi",
+      "quick": "O'rtachadan yaxshiroq",
+      "steady": "Yaxshi natija, mashq qiling",
+      "casual": "Mashq bilan yaxshilanadi"
+    },
+    "rankImproved": "Siz #{{from}} dan #{{to}} ga ko‘tarildingiz!",
+    "completed": "yakunlandi",
+    "averageResult": "O‘rtacha natija",
+    "correct": "To‘g‘ri",
+    "errors": "Xato",
+    "timeouts": "Vaqt tugashi",
+    "mode": "Rejim",
+    "shareResult": "Natijani ulashish",
+    "changeSettings": "Sozlamalarni o‘zgartirish",
+    "duelTitle": "Do‘st bilan natija"
+  },
+  "compare": {
+    "title": "Natijalarni solishtirish",
+    "you": "Siz",
+    "opponent": "{{name}}",
+    "won": "G'alaba qozondingiz!",
+    "lost": "Bu safar mag'lub bo'ldingiz",
+    "tie": "Durrang!",
+    "challengeCta": "Javob berish",
+    "diffFaster": "{{ms}} ms tezroq"
+  },
+  "share": {
+    "title": "Musobaqaga chaqiring",
+    "message": "Mening reaksiya vaqtim {{time}} ms. Meni yenga olasizmi?",
+    "shareButton": "Telegram orqali ulashish",
+    "copyLink": "Havolani nusxalash",
+    "copied": "Nusxalandi"
+  },
+  "settings": {
+    "title": "Sozlamalar",
+    "language": "Til",
+    "sound": "Ovoz effektlari",
+    "haptics": "Tebranish",
+    "resetStats": "Statistikani tozalash",
+    "resetConfirm": "Barcha natijalar o'chiriladi. Davom etasizmi?",
+    "resetConfirmCta": "Ha, tozalash",
+    "cancel": "Bekor qilish",
+    "version": "Versiya {{version}}"
+  },
+  "errors": {
+    "generic": "Nimadir xato ketdi. Qayta urinib ko'ring.",
+    "notInTelegram": "Ilova Telegram ichida ochilishi kerak."
+  },
+  "nav": {
+    "home": "Bosh sahifa",
+    "leaderboard": "Reyting",
+    "profile": "Profil",
+    "settings": "Sozlamalar",
+    "notifications": "Xabarlar"
+  },
+  "setup": {
+    "rounds": "Raundlar soni",
+    "survival": "Yutqazgungacha",
+    "difficulty": "Qiyinlik darajasi",
+    "memorySize": "Xotira hajmi",
+    "shuffle": "Aralashtirish yurishlari",
+    "howTo": "Qanday o‘ynaladi?",
+    "start": "O‘yinni boshlash",
+    "friend": "Do‘st bilan o‘ynash",
+    "onlineRequired": "Do‘st bilan o‘ynash uchun onlayn akkaunt ulanishi kerak.",
+    "friendsLoadError": "Do‘stlar ro‘yxatini yuklab bo‘lmadi.",
+    "inviteError": "Chaqiruv yuborib bo‘lmadi.",
+    "chooseFriend": "Do‘stni tanlang",
+    "sameSettings": "Tanlangan raund, qiyinlik va maxsus sozlamalar ikkala o‘yinchi uchun bir xil bo‘ladi.",
+    "noFriends": "Hali do‘stlaringiz yo‘q. Avval Profil bo‘limidan do‘st qo‘shing.",
+    "sending": "Yuborilmoqda...",
+    "invite": "Chaqirish",
+    "title": "O‘yin sozlamalari"
+  },
+  "difficulty": {
+    "easy": {
+      "title": "Oson",
+      "description": "Kattaroq elementlar va ko‘proq vaqt"
+    },
+    "medium": {
+      "title": "O‘rta",
+      "description": "Muvozanatli standart rejim"
+    },
+    "hard": {
+      "title": "Qiyin",
+      "description": "Ko‘proq chalg‘ituvchi va kamroq vaqt"
+    },
+    "very-hard": {
+      "title": "Juda qiyin",
+      "description": "Eng tez va murakkab rejim"
+    },
+    "progressive": {
+      "title": "Qiyinlashib boruvchi",
+      "description": "Har raundda qiyinlik oshadi"
+    }
+  },
+  "gameplay": {
+    "round": "Raund",
+    "remember": "Yongan kataklarni eslab qoling",
+    "repeat": "Naqshni takrorlang",
+    "start": "Boshlash",
+    "stop": "To‘xtatish",
+    "roundsCompleted": "raund yakunlandi",
+    "correct": "To‘g‘ri!",
+    "wrong": "Noto‘g‘ri!",
+    "tapAscending": "Raqamlarni 1 dan boshlab ketma-ket bosing.",
+    "findOddSticker": "Boshqalardan farq qiladigan stikerni toping.",
+    "rememberSequence": "Stikerlar ketma-ketligini eslab qoling.",
+    "repeatSequence": "Ketma-ketlikni aynan takrorlang.",
+    "orderPuzzle": "Raqamlarni 1 dan 15 gacha tartiblang.",
+    "moves": "Yurishlar",
+    "estimateWithoutTimer": "Taymerga qaramasdan vaqtni his qiling.",
+    "timerHidden": "Taymer yashirilgan — vaqtni o‘zingiz baholang.",
+    "keepEyesCenter": "Ko‘zingizni markazdagi ✚ belgidan uzmang.",
+    "waitSticker": "Periferiyada stiker paydo bo‘lishini kuting.",
+    "decideNow": "GO bo‘lsa bosing, NO-GO bo‘lsa kuting.",
+    "waitSignal": "Signalni kuting...",
+    "nback": {
+      "position": "Joy mos",
+      "sound": "Tovush mos",
+      "both": "Ikkalasi mos",
+      "none": "Hech biri"
+    },
+    "findAndTap": "Toping va bosing:",
+    "rememberNumber": "Eslab qoling!",
+    "whichNumber": "Qaysi son edi?",
+    "digitsCount": "{{count}} xonali son",
+    "wordColorInstruction": "So‘zga emas — yozuv rangiga qarab bosing!",
+    "time": "Vaqt",
+    "progress": "Jarayon",
+    "target": "Keyingi",
+    "options": "Variantlar",
+    "selected": "Tanlandi",
+    "step": "Qadam",
+    "turns": "Urinishlar",
+    "level": "Bosqich",
+    "hiddenShort": "Yashirin",
+    "inPlace": "joyida",
+    "puzzleHint": "Bo‘sh katakka qo‘shni turgan toshni bosing.",
+    "emptyCell": "Bo‘sh katak"
+  },
+  "history": {
+    "title": "O‘yin tarixi",
+    "limit": "Oxirgi 30 ta o‘yin",
+    "empty": "Hali o‘yinlar yo‘q",
+    "meta": {
+      "rounds": "Raundlar",
+      "correct": "To‘g‘ri",
+      "errors": "Xatolar",
+      "difficulty": "Qiyinlik",
+      "survival": "Yutqazgungacha",
+      "memorySize": "Xotira hajmi",
+      "moves": "Yurishlar",
+      "mistakes": "Xatolar",
+      "hints": "Maslahatlar",
+      "clues": "Ochiq kataklar",
+      "pairs": "Juftliklar",
+      "attempts": "Urinishlar",
+      "mode": "Rejim",
+      "nBack": "N-Back",
+      "puzzleShuffle": "Aralashtirish",
+      "failed": "Yutqazilgan",
+      "targetMs": "Maqsad vaqti",
+      "opponent": "Raqib",
+      "outcome": "Natija",
+      "opponentTimeMs": "Raqib vaqti",
+      "captured": "Urilgan donalar",
+      "opponentCaptured": "Yo‘qotilgan donalar",
+      "promotions": "Damkalar",
+      "durationMs": "Davomiylik",
+      "color": "Dona rangi",
+      "resultReason": "Yakun sababi"
+    },
+    "values": {
+      "solo": "Yakka",
+      "duel": "Duel",
+      "win": "G‘alaba",
+      "draw": "Durrang",
+      "loss": "Mag‘lubiyat",
+      "white": "Oq",
+      "black": "Qora"
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "changeAvatar": "Avatarni o‘zgartirish",
+    "friends": "Do‘stlar",
+    "offline": "Onlayn funksiyalar mavjud emas",
+    "delete": "Profilni o‘chirish",
+    "deleting": "O‘chirilmoqda...",
+    "deleteConfirm": "Profil va unga tegishli barcha ma’lumotlar o‘chirilsinmi?"
+  },
+  "notifications": {
+    "title": "Xabarlar",
+    "clear": "Hammasini tozalash",
+    "empty": "Xabarlar yo‘q",
+    "accept": "Qabul qilish",
+    "reject": "Bekor qilish"
+  },
+  "games": {
+    "reaction": {
+      "title": "Reaksiya",
+      "description": "Signalni kuting va darhol bosing.",
+      "instructions": "Signalni kuting va darhol bosing.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "emoji": {
+      "title": "Emoji topish",
+      "description": "Kerakli emojini chalg‘ituvchilar orasidan toping.",
+      "instructions": "Kerakli emojini chalg‘ituvchilar orasidan toping.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "numberMemory": {
+      "title": "Raqam xotirasi",
+      "description": "Raqamni eslab qoling va to‘g‘ri tanlang.",
+      "instructions": "Raqamni eslab qoling va to‘g‘ri tanlang.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "stroop": {
+      "title": "Stroop testi",
+      "description": "So‘zga emas, yozuv rangiga qarab javob bering.",
+      "instructions": "So‘zga emas, yozuv rangiga qarab javob bering.\n\nHar bir raundni aniq bajaring. Tez va to‘g‘ri javob yakuniy millisekund natijasini yaxshilaydi."
+    },
+    "ascending": {
+      "title": "O‘suvchi raqamlar",
+      "description": "Raqamlarni kichigidan kattasiga bosing.",
+      "instructions": "1. Raqamlarni 1 dan boshlab o‘sish tartibida bosing.\n2. Noto‘g‘ri raqam vaqt jarimasini beradi; yutqazgungacha rejimida raund tugaydi.\n3. Qiyinlik oshganda kataklar va raqamlar soni ko‘payadi."
+    },
+    "odd": {
+      "title": "Ortiqchasini toping",
+      "description": "Boshqalardan farqli yagona belgini toping.",
+      "instructions": "1. Bir xil stikerlar orasidagi yagona farqli stikerni toping.\n2. Noto‘g‘ri tanlov vaqt jarimasini beradi.\n3. Qiyinlik oshganda stikerlar soni ko‘payadi va farqlar noziklashadi."
+    },
+    "pattern": {
+      "title": "Naqsh xotirasi",
+      "description": "Yongan kataklarni eslab qolib, naqshni takrorlang.",
+      "instructions": "1. Yongan stikerli kataklarning joylashuvini eslab qoling.\n2. Stikerlar yashirilgach, aynan o‘sha kataklarni tanlang.\n3. Qiyinlik oshganda kataklar va eslab qolinadigan joylar soni ko‘payadi."
+    },
+    "goNoGo": {
+      "title": "Go / No-Go",
+      "description": "Yashilda bosing, qizilda bosmang.",
+      "instructions": "1. GO stikerlari: 🚀 🍏 ✅ 🐸 — ko‘ringanda tez bosing.\n2. NO-GO stikerlari: 🛑 🍎 ❌ 🦊 — ko‘ringanda umuman bosmang.\n3. Qiyinlik oshganda javob uchun vaqt qisqaradi va NO-GO signallari ko‘payadi."
+    },
+    "math": {
+      "title": "Og‘zaki hisob",
+      "description": "Hisob misollarini tez va aniq yeching.",
+      "instructions": "1. Ekrandagi hisob misolini fikran yeching.\n2. To‘rtta variantdan to‘g‘ri javobni tanlang.\n3. Qiyinlik oshganda ayirish, ko‘paytirish va bo‘lish amallari qo‘shiladi."
+    },
+    "sequence": {
+      "title": "Ketma-ketlik xotirasi",
+      "description": "Ketma-ketlikni eslab, to‘g‘ri davomini tanlang.",
+      "instructions": "1. Ko‘rsatilgan stikerlar ketma-ketligini eslab qoling.\n2. Ketma-ketlik yashirilgach, stikerlarni aynan o‘sha tartibda bosing.\n3. Qiyinlik va raund oshgani sari ketma-ketlik uzayadi."
+    },
+    "cards": {
+      "title": "Kartalar xotirasi",
+      "description": "Kartalarni ochib, barcha juftliklarni toping.",
+      "instructions": "1. Kartalarni ikki tadan ochib, bir xil stikerli juftlarni toping.\n2. Ochilgan juftlar mos kelmasa, qayta yopiladi.\n3. Barcha juftlarni eng kam vaqtda toping; qiyinlik oshganda kartalar ko‘payadi."
+    },
+    "time": {
+      "title": "Vaqtni baholash",
+      "description": "Ko‘rinadigan taymersiz berilgan vaqt oralig‘ini baholang.",
+      "instructions": "1. Boshlash tugmasini bosing va ko‘rsatilgan vaqtni ichingizda sanang.\n2. Vaqt yetdi deb o‘ylaganingizda To‘xtatish tugmasini bosing.\n3. Natija haqiqiy vaqt bilan farq millisekundlarda hisoblanadi."
+    },
+    "peripheral": {
+      "title": "Periferik ko‘rish",
+      "description": "Markazga qarab turib, chetdagi nishonni aniqlang.",
+      "instructions": "1. Ko‘zingizni markazdagi ✚ belgidan uzmang.\n2. Chetda juda qisqa paydo bo‘ladigan stikerni periferik ko‘rish bilan aniqlang.\n3. Stiker yo‘qolgach, u paydo bo‘lgan yo‘nalishni tanlang. Qiyinlik oshganda stiker qisqaroq ko‘rinadi va 8 yo‘nalish ishlatiladi."
+    },
+    "twentyFour": {
+      "title": "24 o‘yini",
+      "description": "Natijasi aniq 24 bo‘ladigan ifodani tanlang.",
+      "instructions": "1. To‘rtta berilgan raqamning har biridan bir martadan foydalaning.\n2. Natijasi aynan 24 bo‘ladigan ifodani tanlang.\n3. Amallar tartibi va qavslarni diqqat bilan tekshiring."
+    },
+    "nback": {
+      "title": "Dual N-Back",
+      "description": "Oldingi N qadamdagi joylashuv va tovushni kuzating.",
+      "instructions": "1. Har qadamda katak joylashuvi va tovush-stikerni kuzating.\n2. Ular N qadam oldingi signal bilan mos kelishini belgilang: joy, tovush, ikkalasi yoki hech biri.\n3. N qiymati va qiyinlik oshganda xotira yuklamasi ham oshadi."
+    },
+    "puzzle": {
+      "title": "15 pazl",
+      "description": "Kataklarni surib, 1 dan 15 gacha tartiblang.",
+      "instructions": "1. Bo‘sh katakka qo‘shni raqamni bosib uni suring.\n2. Raqamlarni chapdan o‘ngga, yuqoridan pastga 1 dan 15 gacha tartiblang.\n3. Qiyinlik va aralashtirish soni oshganda yechim uchun ko‘proq yurish kerak bo‘ladi."
+    },
+    "sudoku": {
+      "title": "Sudoku",
+      "description": "Mantiq yordamida 9×9 doskani raqamlar bilan to‘ldiring.",
+      "instructions": "Har bir qator, ustun va 3×3 blokda 1 dan 9 gacha bo‘lgan raqamlar faqat bir martadan qatnashishi kerak.\n\nKatakni tanlab raqam kiriting. Qayd rejimida kichik ehtimoliy raqamlarni yozishingiz mumkin. Xato javob vaqtga 15 soniya, maslahat esa 30 soniya jarima qo‘shadi. Duelda ikkala o‘yinchiga aynan bir xil va yagona yechimga ega doska beriladi."
+    },
+    "ticTacToe": {
+      "title": "Tic Tac Toe",
+      "description": "Do‘stingiz bilan navbatma-navbat X va O qo‘yib o‘ynang.",
+      "instructions": "3×3 doskada gorizontal, vertikal yoki diagonal bo‘yicha uchta bir xil belgini birinchi bo‘lib joylashtiring."
+    },
+    "friendOnly": "Faqat do‘st bilan",
+    "checkers": {
+      "title": "Shashka",
+      "description": "Do‘stingiz bilan 8×8 rus shashkasini o‘ynang.",
+      "instructions": "Oq donalar birinchi yuradi. Oddiy dona oldinga yuradi, lekin barcha yo‘nalishda ura oladi. Urish imkoniyati bo‘lsa, urish majburiy. Ketma-ket urishda shu dona bilan davom etiladi. Oxirgi qatorga yetgan dona damkaga aylanadi va diagonal bo‘ylab uzoq yuradi. Har bir yurish uchun 60 soniya beriladi."
+    }
+  },
+  "colors": {
+    "green": "Yashil",
+    "red": "Qizil",
+    "blue": "Ko‘k",
+    "yellow": "Sariq",
+    "purple": "Binafsha",
+    "orange": "To‘q sariq"
+  },
+  "duel": {
+    "sameContent": "Ikkala o‘yinchiga ham aynan bir xil doska, stikerlar va topshiriqlar beriladi."
+  },
+  "sudoku": {
+    "time": "Vaqt",
+    "mistakes": "Xatolar",
+    "progress": "Jarayon",
+    "clues": "Boshlang‘ich raqamlar",
+    "hints": "Maslahat",
+    "notesOn": "Qayd yoqilgan",
+    "autoCheck": "Avto-tekshiruv",
+    "undo": "Qaytarish",
+    "erase": "O‘chirish",
+    "notes": "Qayd",
+    "hint": "Maslahat",
+    "solved": "Sudoku yechildi!",
+    "hintsUsed": "Ishlatilgan maslahat",
+    "averageClues": "O‘rtacha ochiq katak",
+    "exitConfirm": "Joriy Sudoku natijasi saqlanmaydi. Chiqasizmi?",
+    "setupInfo": "Sudoku uchun 1–3 ta doska tanlanadi. Har doska yagona yechimga ega va qiyinlikka qarab boshlang‘ich raqamlar soni kamayadi.",
+    "penaltyInfo": "Jarimalar umumiy vaqtga +{{seconds}} soniya qo‘shdi."
+  },
+  "leaderboard": {
+    "yourPosition": "Sizning o‘rningiz",
+    "youAreAlreadyInTop": "Siz ushbu ro‘yxatda allaqachon ko‘rinib turibsiz.",
+    "notRankedYet": "Siz hozircha top ro‘yxatda emassiz.",
+    "notConfigured": "Reyting tizimi hali sozlanmagan.",
+    "empty": "Reyting ro‘yxati hozircha bo‘sh.",
+    "tabs": {
+      "global": "Global",
+      "friends": "Do‘stlar",
+      "weekly": "Haftalik",
+      "monthly": "Oylik"
+    },
+    "descriptions": {
+      "global": "Jami XP bo‘yicha umumiy reyting",
+      "friends": "Do‘stlaringiz orasida jami XP bo‘yicha",
+      "weekly": "Shu hafta yig‘ilgan XP bo‘yicha",
+      "monthly": "Shu oy yig‘ilgan XP bo‘yicha"
+    }
+  },
+  "ticTacToe": {
+    "friendOnlyTitle": "Faqat do‘stlar bilan o‘ynaladi",
+    "friendOnlyDescription": "Bu o‘yinda qiyinlik sozlamasi yo‘q. Do‘stingizni tanlang, taklif yuboring va navbatma-navbat o‘ynang.",
+    "inviteFriend": "Do‘stni o‘yinga chaqirish",
+    "opponent": "Raqib",
+    "youWon": "Siz g‘alaba qozondingiz!",
+    "youLost": "Raqib g‘alaba qozondi",
+    "draw": "Durrang",
+    "yourTurn": "Sizning navbatingiz",
+    "opponentTurn": "{{name}} yurishini kuting",
+    "youAreMark": "Sizning belgingiz: {{mark}}",
+    "moves": "Yurishlar",
+    "emptyCells": "Bo‘sh kataklar",
+    "leaveGame": "O‘yindan chiqish",
+    "duelMode": "3×3 doska · navbatma-navbat",
+    "hostStarts": "Taklif yuborgan o‘yinchi X belgisi bilan birinchi yuradi.",
+    "exitConfirm": "O‘yin hali tugamadi. Chiqasizmi?",
+    "outcomes": {
+      "win": "G‘alaba",
+      "draw": "Durrang",
+      "loss": "Mag‘lubiyat"
+    },
+    "playAgain": "Yana do‘stni chaqirish",
+    "shareWin": "{{name}}ga qarshi Tic Tac Toe o‘yinida g‘alaba qozondim!",
+    "shareDraw": "{{name}} bilan Tic Tac Toe o‘yini durrang tugadi.",
+    "shareLoss": "{{name}}ga qarshi Tic Tac Toe o‘ynadim."
+  },
+  "checkers": {
+    "friendOnlyTitle": "Faqat do‘stlar bilan o‘ynaladi",
+    "friendOnlyDescription": "Do‘stingizni tanlang. Har bir yurish serverda tekshiriladi va ikki telefonda doska bir xil turadi.",
+    "inviteFriend": "Do‘stni Shashkaga chaqirish",
+    "opponent": "Raqib",
+    "oneMinuteRule": "Har yurishga 1 daqiqa",
+    "mandatoryCapture": "Urish majburiy",
+    "drawAndResign": "Durrang va taslim bo‘lish",
+    "flyingKings": "Uzoq yuruvchi damka",
+    "duelMode": "8×8 rus shashkasi · faqat do‘st bilan",
+    "hostStarts": "Taklif yuborgan o‘yinchi oq donalarda birinchi yuradi. Har yurish uchun 60 soniya.",
+    "yourTurn": "Sizning navbatingiz",
+    "opponentTurn": "{{name}} yurishini kuting",
+    "continueCapture": "Urishni shu dona bilan davom ettiring",
+    "youAreWhite": "Siz oq donalarda o‘ynayapsiz",
+    "youAreBlack": "Siz qora donalarda o‘ynayapsiz",
+    "turnTime": "Yurish vaqti",
+    "moves": "Yurishlar",
+    "captured": "Siz urdingiz",
+    "opponentCaptured": "Raqib urdi",
+    "promotions": "Damkalar",
+    "remaining": "Qolgan dona",
+    "offerDraw": "Durrang taklif qilish",
+    "resign": "Taslim bo‘lish",
+    "resignConfirm": "Taslim bo‘lsangiz, raqib g‘olib deb hisoblanadi. Davom etasizmi?",
+    "drawOfferTitle": "Durrang taklifi",
+    "drawOfferDescription": "{{name}} o‘yinni durrang bilan tugatishni taklif qildi.",
+    "acceptDraw": "Qabul qilish",
+    "rejectDraw": "Rad etish",
+    "drawOfferPending": "Durrang taklifingiz raqib javobini kutmoqda.",
+    "youWon": "Siz g‘alaba qozondingiz!",
+    "youLost": "Raqib g‘alaba qozondi",
+    "draw": "O‘yin durrang tugadi",
+    "exitConfirm": "Shashka hali boshlanmagan yoki tayyorgarlikda. Chiqasizmi?",
+    "leaveAsResignConfirm": "O‘yindan chiqish taslim bo‘lish hisoblanadi. Chiqasizmi?",
+    "playAgain": "Yana do‘stni chaqirish",
+    "shareWin": "{{name}}ga qarshi Shashkada g‘alaba qozondim!",
+    "shareDraw": "{{name}} bilan Shashka o‘yini durrang tugadi.",
+    "shareLoss": "{{name}}ga qarshi Shashka o‘ynadim.",
+    "reasons": {
+      "all_captured": "Raqibning barcha donalari urildi.",
+      "no_moves": "Raqibda ruxsat etilgan yurish qolmadi.",
+      "timeout": "Yurish uchun berilgan 1 daqiqa tugadi.",
+      "resign": "O‘yinchilardan biri taslim bo‘ldi.",
+      "draw_agreement": "Ikki o‘yinchi durrangga rozi bo‘ldi.",
+      "repetition": "Bir xil holat uch marta takrorlandi.",
+      "no_progress": "Uzoq vaqt dona urilmadi yoki damka hosil bo‘lmadi.",
+      "move_limit": "O‘yin maksimal yurish chegarasiga yetdi.",
+      "unknown": "O‘yin yakunlandi."
+    }
+  }
+}
