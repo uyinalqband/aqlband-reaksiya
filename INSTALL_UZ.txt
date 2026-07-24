@@ -1,0 +1,57 @@
+AQLBAND V2.1 — TO‘LIQ YAKUNIY LOYIHA
+
+BU ZIP HAQIDA
+- Bu patch emas, to‘liq GitHub repository.
+- Eski loyiha ustiga alohida fayllarni tanlab qo‘shish shart emas.
+- ZIP ichidagi AqlBand_V2_Final_Complete papkasi tarkibini repository boshiga joylang.
+- node_modules va dist ZIP ichiga kiritilmagan.
+
+GITHUB VA CLOUDFLARE
+
+1. ZIP’ni oching.
+2. AqlBand_V2_Final_Complete papkasidagi barcha fayllarni GitHub repository boshiga yuklang.
+3. Eski fayllarni Replace qiling yoki yangi toza repository ishlating.
+4. Commit va Push qiling.
+5. Cloudflare Pages sozlamalari:
+   Build command: npm run build
+   Output directory: dist
+   Node version: 22
+
+Environment variables:
+- VITE_SUPABASE_URL
+- VITE_SUPABASE_ANON_KEY
+
+SUPABASE MIGRATSIYALARI
+
+Yangi Supabase loyihasi:
+- supabase/migrations ichidagi 0001 dan 0018 gacha fayllarni raqam tartibida ishga tushiring.
+
+AqlBand V2 uchun 0016 migratsiyasi avval ishga tushirilgan bo‘lsa:
+- faqat supabase/migrations/0018_direct_game_start.sql faylini Run qiling.
+- 0017 alohida shart emas; 0018 uning start funksiyasini yakuniy ko‘rinishda almashtiradi.
+
+0018 quyidagilarni yakunlaydi:
+- reytingli Shashkani raqib topilishi bilan darhol boshlash;
+- “Tayyorman” va 5 soniyalik sanoqni olib tashlash;
+- oq donalarning birinchi yurishiga 2 daqiqa berish;
+- haqiqiy ELO qiymatlarini o‘yin oynasida ko‘rsatish.
+
+EDGE FUNCTION
+
+1. Supabase → Edge Functions → aqlband-api → Code.
+2. supabase/functions/aqlband-api/index.ts fayli bilan kodni to‘liq almashtiring.
+3. Deploy function tugmasini bosing.
+4. Legacy JWT verification o‘chiq qolsin.
+
+TELEGRAMDA YAKUNIY SINOV
+
+1. Mini App’ni ikkala telefonda to‘liq yoping va qayta oching.
+2. Reytingli Shashkada “Raqib topish”ni ikki akkauntda bosing.
+3. Raqib topilgach o‘yin darhol ochilishini tekshiring.
+4. Oq donaning taymeri 2:00, keyingi yurishlar 1:00 ekanini tekshiring.
+5. Tosh va katakka bir martadan bosib yurishni tekshiring.
+6. Urish majburiyligi, ketma-ket urish, damka, durrang va taslim bo‘lishni tekshiring.
+7. G‘alabada ELO oshishi, mag‘lubiyatda kamayishini tekshiring.
+8. Do‘st bilan Shashka va Tic Tac Toe’da ELO o‘zgarmasligini tekshiring.
+9. Mini-o‘yinlarning sozlash oynasisiz, 1 raund va maksimal qiyinlikda ochilishini tekshiring.
+10. Profil, avatar, ismni o‘zgartirish, musiqa va til sozlamalarini tekshiring.
