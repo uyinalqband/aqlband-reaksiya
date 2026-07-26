@@ -1,0 +1,27 @@
+AQLBAND V2.3 — AUDIO YANGILANISHI
+
+O‘RNATISH
+1. ZIP faylni oching.
+2. Ichidagi fayllarni GitHub repository boshiga joylang.
+3. Mavjud fayllarni Replace qiling.
+4. Commit va Push qiling.
+
+BU YANGILANISHDA:
+- Shashka uchun vaziyatga mos adaptiv musiqa
+- Musiqa va effektlar uchun alohida balandlik
+- Yurish, urish, ketma-ket urish va damka effektlari
+- Navbat kelishi va vaqt tugashiga 25/10 soniyalik ogohlantirish
+- Emoji va do‘stlik so‘rovi tovushlari
+- Muhim effekt vaqtida musiqani vaqtincha pasaytirish
+- Ilova fon holatiga o‘tganda audioni pauza qilish
+- Reaksiya o‘yinida natija va timeout tovushlari
+- Sozlamalarda ovozni oldindan sinash tugmasi
+
+SUPABASE
+- Yangi SQL migratsiyasi kerak emas.
+- Edge Function’ni qayta deploy qilish kerak emas.
+
+TEKSHIRUV
+- npm run verify
+- npm run typecheck
+- npm run build

@@ -1,0 +1,27 @@
+AQLBAND V2.3.1 — MATCHMAKING VA DO‘STLIK TUZATISHLARI
+
+GITHUB
+1. ZIP faylni repository boshiga oching.
+2. Barcha mavjud fayllarni Replace qiling.
+3. Commit va Push qiling.
+
+SUPABASE SQL — MAJBURIY
+1. SQL Editor’da quyidagi yangi faylni to‘liq ishga tushiring:
+   supabase/migrations/0024_matchmaking_reliability.sql
+
+EDGE FUNCTION — MAJBURIY
+1. Quyidagi yangilangan fayl bilan `aqlband-api` funksiyasini qayta deploy qiling:
+   supabase/functions/aqlband-api/index.ts
+
+TUZATILDI
+- Pastdagi katta “Do‘st qo‘shish” tugmasi olib tashlandi.
+- Kichik + tugmasi raqib ismi yoniga ko‘chirildi.
+- Mavjud do‘st va AI raqibda + ko‘rinmaydi.
+- Yuborilgan so‘rov ✓ bilan ko‘rsatiladi.
+- Kiruvchi so‘rov bo‘lsa + uni qabul qiladi.
+- AI fallback polling noto‘g‘ri endpointdan to‘g‘risiga o‘tkazildi.
+- 20 soniyali AI hisoblagichi qo‘shildi.
+- Parallel polling va ikki duel yaralishidan himoya qo‘shildi.
+- AI server xatolari endi yashirilmaydi.
+
+ZIP oldingi audio yangilanishidagi zarur fayllarni ham o‘z ichiga oladi.
