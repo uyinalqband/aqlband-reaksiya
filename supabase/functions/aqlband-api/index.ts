@@ -1179,8 +1179,9 @@ function minimaxServerCheckers(
 
 function chooseAiCheckersMove(
   board: readonly ServerCheckersPiece[],
+  side: ServerCheckersSide,
 ): ServerCheckersMove {
-  const turns = serverCheckersTurns(board, 'black');
+  const turns = serverCheckersTurns(board, side);
   if (turns.length === 1) return turns[0].first;
   const deadline = Date.now() + 320;
   const cache = new Map<string, number>();
@@ -1189,18 +1190,21 @@ function chooseAiCheckersMove(
     ? 7
     : 5;
   let bestMove = turns[0].first;
-  let bestScore = Infinity;
+  let bestScore = side === 'white' ? -Infinity : Infinity;
   for (const turn of turns) {
     const score = minimaxServerCheckers(
       turn.board,
-      'white',
+      side === 'white' ? 'black' : 'white',
       depth - 1,
       -Infinity,
       Infinity,
       deadline,
       cache,
     );
-    if (score < bestScore) {
+    if (
+      (side === 'white' && score > bestScore) ||
+      (side === 'black' && score < bestScore)
+    ) {
       bestScore = score;
       bestMove = turn.first;
     }
@@ -1443,29 +1447,40 @@ function duelSnapshot(duel: DuelRow) {
   return { duel, serverNow: Date.now() };
 }
 
+function aiCheckersRole(duel: DuelRow): 'host' | 'guest' {
+  const configuredRole = duel.game_config?.aiRole;
+  return configuredRole === 'host' || configuredRole === 'guest'
+    ? configuredRole
+    : 'guest';
+}
+
 async function performAiCheckersTurn(
   serviceClient: SupabaseClient,
   initial: DuelRow,
 ): Promise<DuelRow> {
   let duel = initial;
   for (let step = 0; step < 12; step += 1) {
+    const aiRole = aiCheckersRole(duel);
+    const humanRole = aiRole === 'host' ? 'guest' : 'host';
+    const aiSide = serverCheckersSideForRole(aiRole);
+    const humanSide = serverCheckersSideForRole(humanRole);
     if (
       duel.opponent_type !== 'ai' ||
       duel.status !== 'playing' ||
-      duel.checkers_turn !== 'guest'
+      duel.checkers_turn !== aiRole
     ) return duel;
 
     const boardString = duel.checkers_board ?? CHECKERS_INITIAL_BOARD;
     const board = parseServerCheckersBoard(boardString);
     const moves = serverCheckersLegalMoves(
       board,
-      'black',
+      aiSide,
       duel.checkers_forced_from ?? null,
     );
     if (moves.length === 0) {
       const { data } = await serviceClient.from('duels').update({
         status: 'finished',
-        checkers_winner: 'host',
+        checkers_winner: humanRole,
         checkers_result_reason: 'no_moves',
         finished_at: new Date().toISOString(),
         checkers_turn_deadline_at: null,
@@ -1476,7 +1491,7 @@ async function performAiCheckersTurn(
     // Alpha-beta search evaluates material, kings, mobility, positioning and
     // forced continuations. During a multi-capture only that piece may move.
     const move = duel.checkers_forced_from === null
-      ? chooseAiCheckersMove(board)
+      ? chooseAiCheckersMove(board, aiSide)
       : moves
           .map((candidate) => ({
             candidate,
@@ -1484,43 +1499,60 @@ async function performAiCheckersTurn(
               applyServerCheckersMove(board, candidate).board,
             ),
           }))
-          .sort((left, right) => left.score - right.score)[0].candidate;
+          .sort((left, right) =>
+            aiSide === 'white'
+              ? right.score - left.score
+              : left.score - right.score
+          )[0].candidate;
     const applied = applyServerCheckersMove(board, move);
     const nextBoard = serializeServerCheckersBoard(applied.board);
     const more = move.captured !== null
       ? serverCheckersCapturesForPiece(applied.board, move.to)
       : [];
     const continueCapture = more.length > 0;
-    const hostPieces = serverCheckersCountPieces(applied.board, 'white');
-    const hostMoves = continueCapture
+    const humanPieces = serverCheckersCountPieces(applied.board, humanSide);
+    const humanMoves = continueCapture
       ? [move]
-      : serverCheckersLegalMoves(applied.board, 'white', null);
-    const won = !continueCapture && (hostPieces === 0 || hostMoves.length === 0);
+      : serverCheckersLegalMoves(applied.board, humanSide, null);
+    const won = !continueCapture &&
+      (humanPieces === 0 || humanMoves.length === 0);
     const now = Date.now();
+    const aiCapturesKey = aiRole === 'host'
+      ? 'checkers_host_captures'
+      : 'checkers_guest_captures';
+    const aiPromotionsKey = aiRole === 'host'
+      ? 'checkers_host_promotions'
+      : 'checkers_guest_promotions';
+    const aiCaptures = aiRole === 'host'
+      ? duel.checkers_host_captures
+      : duel.checkers_guest_captures;
+    const aiPromotions = aiRole === 'host'
+      ? duel.checkers_host_promotions
+      : duel.checkers_guest_promotions;
 
     const { data, error } = await serviceClient.from('duels').update({
       checkers_board: nextBoard,
-      checkers_turn: continueCapture ? 'guest' : 'host',
+      checkers_turn: continueCapture ? aiRole : humanRole,
       checkers_forced_from: continueCapture ? move.to : null,
-      checkers_guest_captures:
-        (duel.checkers_guest_captures ?? 0) + (move.captured !== null ? 1 : 0),
-      checkers_guest_promotions:
-        (duel.checkers_guest_promotions ?? 0) + (applied.promoted ? 1 : 0),
+      [aiCapturesKey]:
+        (aiCaptures ?? 0) + (move.captured !== null ? 1 : 0),
+      [aiPromotionsKey]:
+        (aiPromotions ?? 0) + (applied.promoted ? 1 : 0),
       checkers_moves:
         (duel.checkers_moves ?? 0) + (continueCapture ? 0 : 1),
       checkers_last_move_at: new Date(now).toISOString(),
       checkers_turn_deadline_at: won
         ? null
         : new Date(now + CHECKERS_TURN_MS).toISOString(),
-      checkers_winner: won ? 'guest' : null,
+      checkers_winner: won ? aiRole : null,
       checkers_result_reason: won
-        ? (hostPieces === 0 ? 'all_captured' : 'no_moves')
+        ? (humanPieces === 0 ? 'all_captured' : 'no_moves')
         : null,
       status: won ? 'finished' : 'playing',
       finished_at: won ? new Date(now).toISOString() : null,
     }).eq('id', duel.id)
       .eq('checkers_board', boardString)
-      .eq('checkers_turn', 'guest')
+      .eq('checkers_turn', aiRole)
       .select('*')
       .maybeSingle();
     if (error || !data) return duel;
@@ -3075,7 +3107,7 @@ async function handleAction(
       if (
         duel.opponent_type === 'ai' &&
         duel.status === 'playing' &&
-        duel.checkers_turn === 'guest'
+        duel.checkers_turn === aiCheckersRole(duel)
       ) {
         duel = await performAiCheckersTurn(serviceClient, duel);
       }
