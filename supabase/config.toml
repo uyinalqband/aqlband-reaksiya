@@ -1,0 +1,2 @@
+[functions.checkers-online-api]
+verify_jwt = false
