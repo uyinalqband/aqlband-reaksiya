@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="uz">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#060B12" />
+    <meta name="description" content="AqlBand V2 — Shashka markazidagi strategiya, ELO va miya mashqlari platformasi." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>AqlBand V2 — Shashka va Aql</title>
+    <script>
+      // --- Boot diagnostics -----------------------------------------------
+      // Runs before the app bundle, so it survives even a failed module
+      // load (which React's own error boundary can never catch). Renders a
+      // plain-DOM panel — no React dependency — so a crash is readable and
+      // copyable instead of a silent, unscreenshottable blank screen.
+      window.__aqlband = { checkpoints: [], errors: [] };
+
+      window.__aqlbandCheckpoint = function (name) {
+        window.__aqlband.checkpoints.push(name + ' @ ' + Date.now());
+      };
+
+      function __aqlbandRenderPanel(title, lines) {
+        if (document.getElementById('__aqlband_panel')) return;
+        var panel = document.createElement('div');
+        panel.id = '__aqlband_panel';
+        panel.style.cssText =
+          'position:fixed;inset:0;z-index:999999;background:#060B12;color:#F8FBFF;' +
+          'font-family:ui-monospace,monospace;font-size:12px;line-height:1.5;' +
+          'padding:16px;overflow:auto;white-space:pre-wrap;word-break:break-word;';
+        var heading = document.createElement('div');
+        heading.style.cssText = 'color:#F2AC32;font-weight:bold;font-size:14px;margin-bottom:10px;';
+        heading.textContent = title;
+        panel.appendChild(heading);
+        var pre = document.createElement('div');
+        pre.textContent = lines.join('\n\n');
+        panel.appendChild(pre);
+        var hint = document.createElement('div');
+        hint.style.cssText = 'margin-top:16px;color:#8EA1B7;';
+        hint.textContent = 'Ushbu matnni belgilab nusxalang (uzoq bosib turing) va yuboring.';
+        panel.appendChild(hint);
+        (document.body || document.documentElement).appendChild(panel);
+      }
+
+      window.addEventListener('error', function (e) {
+        window.__aqlband.errors.push(
+          'window.onerror: ' + (e.message || 'unknown') + '\n  at ' + (e.filename || '?') + ':' + (e.lineno || '?') +
+            (e.error && e.error.stack ? '\n' + e.error.stack : ''),
+        );
+      });
+      window.addEventListener('unhandledrejection', function (e) {
+        var reason = e.reason;
+        window.__aqlband.errors.push(
+          'unhandledrejection: ' + (reason && reason.message ? reason.message : String(reason)) +
+            (reason && reason.stack ? '\n' + reason.stack : ''),
+        );
+      });
+
+      // If nothing has rendered into #root within 6s, or an error was
+      // caught, show the diagnostic panel with everything we know.
+      setTimeout(function () {
+        var root = document.getElementById('root');
+        var isEmpty = !root || root.children.length === 0;
+        if (isEmpty || window.__aqlband.errors.length > 0) {
+          var tg = window.Telegram && window.Telegram.WebApp;
+          var env = [
+            'root children: ' + (root ? root.children.length : 'no #root element'),
+            'window.Telegram present: ' + Boolean(window.Telegram),
+            'WebApp present: ' + Boolean(tg),
+            'WebApp.version: ' + (tg ? tg.version : '-'),
+            'WebApp.platform: ' + (tg ? tg.platform : '-'),
+            'CloudStorage present: ' + Boolean(tg && tg.CloudStorage),
+            'HapticFeedback present: ' + Boolean(tg && tg.HapticFeedback),
+            'user agent: ' + navigator.userAgent,
+          ].join('\n');
+          var checkpoints = 'Checkpoints:\n' + (window.__aqlband.checkpoints.join('\n') || '(none reached)');
+          var errors =
+            window.__aqlband.errors.length > 0
+              ? 'Errors:\n' + window.__aqlband.errors.join('\n---\n')
+              : 'Errors: (none captured)';
+          __aqlbandRenderPanel(isEmpty ? 'Ilova ochilmadi — diagnostika' : 'Xatolik aniqlandi — diagnostika', [
+            env,
+            checkpoints,
+            errors,
+          ]);
+        }
+      }, 6000);
+
+      window.__aqlbandCheckpoint('html-head-script-ran');
+    </script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
