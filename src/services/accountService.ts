@@ -8,6 +8,10 @@ export async function updateDisplayName(displayName: string): Promise<AppAccount
   });
 }
 
+export async function updateAvatar(avatar: string): Promise<AppAccount> {
+  return invokePlatformApi<AppAccount>('profile.update_avatar', { avatar });
+}
+
 export async function deleteCurrentAccount(): Promise<void> {
   await invokePlatformApi<{ deleted: boolean }>('profile.delete');
 }
