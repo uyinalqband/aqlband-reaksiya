@@ -1,0 +1,25 @@
+AQLBAND V2.2 — QULAY INTERFEYS
+
+GitHub'ga yuklash:
+1. ZIP faylni oching.
+2. GitHub repository ichidagi eski fayllarni o'chiring.
+3. ZIP ichidagi aqlband-reaksiya-main papkasining ICHIDAGI barcha fayl va
+   papkalarni repository ildiziga yuklang.
+4. package.json repository ildizida turishi shart.
+5. Cloudflare Pages deploy tugashini kuting.
+
+Asosiy yangiliklar:
+- Bosh sahifa Shashkaga yo'naltirildi.
+- Alohida O'yinlar bo'limi yaratildi.
+- O'yinlar kategoriyalar bo'yicha filtrlashga ajratildi.
+- Bildirishnomalar yuqoridagi qo'ng'iroq tugmasiga ko'chirildi.
+- Profil Profil / Do'stlar / Ko'rinish bo'limlariga ajratildi.
+- Shashka ELO va umumiy XP reytingi alohida ko'rsatiladi.
+- O'zbek, rus va ingliz tarjimalari yangilandi.
+
+Muhim:
+- supabase papkasini o'chirmang yoki alohida almashtirmang; u ushbu ZIP ichida
+  to'liq mavjud.
+- Bot tokeni hech qachon GitHub fayllariga yozilmaydi.
+- Cloudflare build komandasi: npm run build
+- Build output: dist

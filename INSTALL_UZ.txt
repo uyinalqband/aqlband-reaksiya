@@ -1,0 +1,45 @@
+AQLBAND V2.1.4 — MINI-O‘YINLAR PROGRESSIYASI
+
+BU PAPKA HAQIDA
+- Bu AqlBand V2.1.4 to‘liq loyiha papkasi.
+- Oldingi V2.1.3 o‘zgarishlari saqlangan.
+- Yangi SQL migratsiyasi yoki Edge Function deployi talab qilinmaydi.
+
+ASOSIY O‘ZGARISHLAR
+1. Tic Tac Toe tugashi bilan natija modal oynasi darhol ko‘rinadi.
+2. Emoji topish 5 raund bo‘ldi va har raund qiyinlashadi.
+3. Quyidagi o‘yinlar qiyinlashib, birinchi xato yoki timeoutgacha davom etadi:
+   - Raqam xotirasi
+   - Stroop testi
+   - Ortiqchasini toping
+   - Naqsh xotirasi
+   - Og‘zaki hisob
+   - Ketma-ketlik xotirasi
+4. Quyidagi o‘yinlar katalog va marshrutlardan olib tashlandi:
+   - O‘suvchi raqam
+   - Go / No-Go
+   - Periferik ko‘rish
+   - 24 o‘yini
+   - Dual N-Back
+5. Mini-o‘yinlar boshida quyidagi tartib o‘rnatildi:
+   1) Tic Tac Toe
+   2) Sudoku
+   3) 15 pazl
+   4) qolgan o‘yinlar oldingi tartibida
+
+GITHUB
+1. Papka ichidagi barcha loyiha fayllarini repository boshiga yuklang.
+2. Mavjud fayllarni Replace qiling.
+3. `.env` maxfiy qiymatlarini o‘zgartirmang.
+4. Commit va Push qiling.
+5. Cloudflare deployment Success bo‘lishini kuting.
+
+LOKAL TEKSHIRUV
+npm ci
+npm run verify
+npm run typecheck
+npm run build
+
+SUPABASE
+- Yangi SQL ishga tushirish shart emas.
+- Edge Function kodini yangilash shart emas.

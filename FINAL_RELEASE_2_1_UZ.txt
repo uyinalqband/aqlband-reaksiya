@@ -1,0 +1,12 @@
+AQLBAND V2.1 FINAL RELEASE
+
+- To‘liq loyiha, patch emas.
+- Shashka va Tic Tac Toe bevosita start.
+- Mini-o‘yinlar bevosita, 1 raund, maksimal qiyinlik.
+- Bir bosishli tez Shashka yurishi.
+- Zamonaviy doska, toshlar, avatarli o‘yinchi panellari.
+- ELO, vaqt, musiqa va urilgan toshlar o‘yin oynasida.
+- Reytingda faqat ism.
+- Avatar reytingdan tashqari ekranlarda.
+- 0018 direct-start migratsiyasi.
+- AqlBand V2.1.
