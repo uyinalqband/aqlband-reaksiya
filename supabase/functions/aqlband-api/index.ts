@@ -1083,40 +1083,59 @@ interface ServerCheckersTurn {
 function serverCheckersTurns(
   board: readonly ServerCheckersPiece[],
   side: ServerCheckersSide,
+  deadline = Number.POSITIVE_INFINITY,
+  maxTurns = 96,
 ): ServerCheckersTurn[] {
   const initial = serverCheckersLegalMoves(board, side, null);
+  const results: ServerCheckersTurn[] = [];
   const expand = (
     current: readonly ServerCheckersPiece[],
     move: ServerCheckersMove,
     first: ServerCheckersMove,
     captures: number,
     promotions: number,
-  ): ServerCheckersTurn[] => {
+  ): void => {
+    if (results.length >= maxTurns) return;
     const applied = applyServerCheckersMove(current, move);
     const nextCaptures = captures + (move.captured === null ? 0 : 1);
     const nextPromotions = promotions + (applied.promoted ? 1 : 0);
-    const continuations = move.captured === null
-      ? []
-      : serverCheckersCapturesForPiece(applied.board, move.to);
-    if (continuations.length === 0) {
-      return [{
+    if (Date.now() >= deadline) {
+      results.push({
         first,
         board: applied.board,
         captures: nextCaptures,
         promotions: nextPromotions,
-      }];
+      });
+      return;
     }
-    return continuations.flatMap((continuation) =>
+    const continuations = move.captured === null
+      ? []
+      : serverCheckersCapturesForPiece(applied.board, move.to);
+    if (continuations.length === 0) {
+      results.push({
+        first,
+        board: applied.board,
+        captures: nextCaptures,
+        promotions: nextPromotions,
+      });
+      return;
+    }
+    for (const continuation of continuations) {
+      if (results.length >= maxTurns || Date.now() >= deadline) break;
       expand(
         applied.board,
         continuation,
         first,
         nextCaptures,
         nextPromotions,
-      )
-    );
+      );
+    }
   };
-  return initial.flatMap((move) => expand(board, move, move, 0, 0));
+  for (const move of initial) {
+    if (results.length >= maxTurns) break;
+    expand(board, move, move, 0, 0);
+  }
+  return results;
 }
 
 function evaluateServerCheckers(board: readonly ServerCheckersPiece[]): number {
@@ -1151,7 +1170,10 @@ function minimaxServerCheckers(
   const cacheKey = `${serializeServerCheckersBoard(board)}:${side}:${depth}`;
   const cached = cache.get(cacheKey);
   if (cached !== undefined) return cached;
-  const turns = serverCheckersTurns(board, side);
+  const turns = serverCheckersTurns(board, side, deadline, 72);
+  if (Date.now() >= deadline && turns.length === 0) {
+    return evaluateServerCheckers(board);
+  }
   if (turns.length === 0) return side === 'white' ? -100_000 - depth : 100_000 + depth;
 
   let alpha = alphaValue;
@@ -1181,9 +1203,18 @@ function chooseAiCheckersMove(
   board: readonly ServerCheckersPiece[],
   side: ServerCheckersSide,
 ): ServerCheckersMove {
-  const turns = serverCheckersTurns(board, side);
-  if (turns.length === 1) return turns[0].first;
-  const deadline = Date.now() + 320;
+  const legalMoves = serverCheckersLegalMoves(board, side, null);
+  if (legalMoves.length === 0) {
+    throw new Error('ai_no_legal_move');
+  }
+  if (legalMoves.length === 1) return legalMoves[0];
+
+  // Edge Function uzoq hisoblab qolmasligi uchun butun AI qidiruvi qat’iy
+  // vaqt va variant chegarasida ishlaydi. Vaqt tugasa ham legalMoves[0]
+  // har doim xavfsiz zaxira yurish bo‘lib qoladi.
+  const deadline = Date.now() + 220;
+  const turns = serverCheckersTurns(board, side, deadline, 96);
+  if (turns.length === 0) return legalMoves[0];
   const cache = new Map<string, number>();
   const depth = serverCheckersCountPieces(board, 'white') +
       serverCheckersCountPieces(board, 'black') <= 10
@@ -1192,6 +1223,7 @@ function chooseAiCheckersMove(
   let bestMove = turns[0].first;
   let bestScore = side === 'white' ? -Infinity : Infinity;
   for (const turn of turns) {
+    if (Date.now() >= deadline) break;
     const score = minimaxServerCheckers(
       turn.board,
       side === 'white' ? 'black' : 'white',
@@ -1490,20 +1522,36 @@ async function performAiCheckersTurn(
 
     // Alpha-beta search evaluates material, kings, mobility, positioning and
     // forced continuations. During a multi-capture only that piece may move.
-    const move = duel.checkers_forced_from === null
-      ? chooseAiCheckersMove(board, aiSide)
-      : moves
-          .map((candidate) => ({
-            candidate,
-            score: evaluateServerCheckers(
-              applyServerCheckersMove(board, candidate).board,
-            ),
-          }))
-          .sort((left, right) =>
-            aiSide === 'white'
-              ? right.score - left.score
-              : left.score - right.score
-          )[0].candidate;
+    // Har qanday tahlil xatosida ham AI qonuniy zaxira yurishni bajaradi.
+    // Shu sabab yutqazayotgan pozitsiyada ham navbat osilib qolmaydi.
+    let move = moves[0];
+    try {
+      const selected = duel.checkers_forced_from === null
+        ? chooseAiCheckersMove(board, aiSide)
+        : moves
+            .map((candidate) => ({
+              candidate,
+              score: evaluateServerCheckers(
+                applyServerCheckersMove(board, candidate).board,
+              ),
+            }))
+            .sort((left, right) =>
+              aiSide === 'white'
+                ? right.score - left.score
+                : left.score - right.score
+            )[0]?.candidate;
+      if (
+        selected &&
+        moves.some((candidate) =>
+          candidate.from === selected.from &&
+          candidate.to === selected.to
+        )
+      ) {
+        move = selected;
+      }
+    } catch {
+      move = moves[0];
+    }
     const applied = applyServerCheckersMove(board, move);
     const nextBoard = serializeServerCheckersBoard(applied.board);
     const more = move.captured !== null
