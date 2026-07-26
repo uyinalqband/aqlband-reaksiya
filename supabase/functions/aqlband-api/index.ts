@@ -27,6 +27,7 @@ interface VerifiedIdentity {
   providerUserId: string;
   displayName: string;
   username: string | null;
+  avatar: string;
   telegramId: number | null;
   authUser: SupabaseAuthUser | null;
 }
@@ -46,7 +47,7 @@ interface AccountRow {
 }
 
 const ACCOUNT_ROW_SELECT =
-  'id,provider,provider_user_id,display_name,username,selected_checkers_skin,selected_checkers_piece_skin,created_at,updated_at,history_generation,history_cleared_at';
+  'id,provider,provider_user_id,display_name,username,avatar,selected_checkers_skin,selected_checkers_piece_skin,created_at,updated_at,history_generation,history_cleared_at';
 
 interface GameAttemptInput {
   id: string;
@@ -298,6 +299,7 @@ function publicAccount(row: AccountRow) {
     provider: row.provider,
     displayName: row.display_name,
     username: row.username,
+    avatar: row.avatar ?? '🧠',
     createdAt: new Date(row.created_at).getTime(),
     historyGeneration: row.history_generation,
     historyClearedAt: new Date(row.history_cleared_at).getTime(),
@@ -1818,6 +1820,24 @@ async function handleAction(
         .eq('guest_user_id', account.id)
         .in('status', ['invited', 'ready_check', 'countdown', 'playing']);
 
+      return publicAccount(data as AccountRow);
+    }
+
+    case 'profile.update_avatar': {
+      const avatar = requireString(payload.avatar, 'avatar', 4);
+      const allowed = new Set(['🧠','⚡','🚀','🦊','🐼','🦁','🐯','🦉','🤖','👾','🎯','🏆']);
+      if (!allowed.has(avatar)) {
+        throw new ApiError('Avatar noto‘g‘ri.', 400, 'invalid_avatar');
+      }
+      const { data, error } = await serviceClient
+        .from('users')
+        .update({ avatar, updated_at: new Date().toISOString() })
+        .eq('id', account.id)
+        .select(ACCOUNT_ROW_SELECT)
+        .single();
+      if (error || !data) {
+        throw new ApiError('Avatarni saqlab bo‘lmadi.', 500, 'profile_update_failed');
+      }
       return publicAccount(data as AccountRow);
     }
 
