@@ -20,6 +20,11 @@ const COPY = {
     daily: '🎁 Kunlik maqsad',
     settingsButton: '🔔 Xabarnomalar',
     share: '📨 Do‘stni taklif qilish',
+    support: '💬 Admin bilan bog‘lanish',
+    supportPrompt: '💬 Fikr, taklif yoki muammoingizni bitta xabar qilib yozing. Xabaringiz adminga yuboriladi.',
+    supportSent: '✅ Xabaringiz adminga yuborildi. Javob shu bot orqali keladi.',
+    adminReplyPrompt: '✍️ Foydalanuvchiga javobingizni bitta xabar qilib yozing.',
+    replyDelivered: '✅ Javob foydalanuvchiga yetkazildi.',
     challenge: '⚔️ <b>Ochiq shashka chaqiruvi!</b>\nBirinchi bo‘lib tugmani bosgan o‘yinchi bellashuvga qo‘shiladi.',
     onlyGroup: 'Bu buyruq Telegram guruhida ishlaydi.',
     adminOnly: 'Bu buyruq faqat administrator uchun.',
@@ -41,6 +46,11 @@ const COPY = {
     daily: '🎁 Цели дня',
     settingsButton: '🔔 Уведомления',
     share: '📨 Пригласить друга',
+    support: '💬 Связаться с администратором',
+    supportPrompt: '💬 Напишите отзыв, предложение или описание проблемы одним сообщением. Оно будет отправлено администратору.',
+    supportSent: '✅ Сообщение отправлено администратору. Ответ придёт через этого бота.',
+    adminReplyPrompt: '✍️ Напишите ответ пользователю одним сообщением.',
+    replyDelivered: '✅ Ответ доставлен пользователю.',
     challenge: '⚔️ <b>Открытый вызов в шашки!</b>\nПервый нажавший кнопку присоединится к матчу.',
     onlyGroup: 'Эта команда работает в группе Telegram.',
     adminOnly: 'Эта команда доступна только администратору.',
@@ -62,6 +72,11 @@ const COPY = {
     daily: '🎁 Daily goals',
     settingsButton: '🔔 Notifications',
     share: '📨 Invite a friend',
+    support: '💬 Contact admin',
+    supportPrompt: '💬 Write your feedback, suggestion or problem in one message. It will be sent to the administrator.',
+    supportSent: '✅ Your message was sent to the administrator. The reply will arrive through this bot.',
+    adminReplyPrompt: '✍️ Write your reply to the user in one message.',
+    replyDelivered: '✅ The reply was delivered to the user.',
     challenge: '⚔️ <b>Open checkers challenge!</b>\nThe first player to press the button joins the match.',
     onlyGroup: 'This command works in a Telegram group.',
     adminOnly: 'This command is available to administrators only.',
@@ -105,6 +120,7 @@ function homeKeyboard(lang: Lang, telegramId: number) {
       [webButton(t.rating, 'rating'), webButton(t.profile, 'profile')],
       [webButton(t.friends, 'friends'), webButton(t.daily, 'daily')],
       [{ text: t.settingsButton, callback_data: 'settings' }],
+      [{ text: t.support, callback_data: 'support:start' }],
       [{ text: t.share, url: `https://t.me/share/url?url=${encodeURIComponent(`https://t.me/${BOT_USERNAME}?start=ref_${telegramId}`)}` }],
     ],
   };
@@ -180,6 +196,93 @@ function admins(): Set<number> {
     .split(',').map((item) => Number(item.trim())).filter(Number.isSafeInteger));
 }
 
+async function clearConversation(db: SupabaseClient, telegramId: number) {
+  await db.from('bot_conversation_state').delete().eq('telegram_id', telegramId);
+}
+
+async function handleConversationText(
+  token: string,
+  db: SupabaseClient,
+  telegramId: number,
+  chatId: number,
+  displayName: string,
+  text: string,
+  lang: Lang,
+): Promise<boolean> {
+  if (!text || text.startsWith('/')) return false;
+  const { data: state } = await db.from('bot_conversation_state')
+    .select('mode,ticket_id,expires_at').eq('telegram_id', telegramId).maybeSingle();
+  if (!state) return false;
+  if (new Date(state.expires_at).getTime() <= Date.now()) {
+    await clearConversation(db, telegramId);
+    return false;
+  }
+
+  if (state.mode === 'awaiting_support') {
+    const safeText = text.slice(0, 3500);
+    const { data: ticket, error } = await db.from('bot_support_tickets').insert({
+      user_telegram_id: telegramId,
+      user_name: displayName.slice(0, 100),
+    }).select('id').single();
+    if (error || !ticket) throw error ?? new Error('support_ticket_failed');
+    await db.from('bot_support_messages').insert({
+      ticket_id: ticket.id,
+      sender: 'user',
+      sender_telegram_id: telegramId,
+      message_text: safeText,
+    });
+    await clearConversation(db, telegramId);
+
+    for (const adminId of admins()) {
+      const adminText =
+        `💬 <b>Yangi murojaat</b>\n\n` +
+        `👤 ${escapeHtml(displayName)}\n` +
+        `🆔 <code>${ticket.id}</code>\n\n` +
+        `${escapeHtml(safeText)}`;
+      await send(token, adminId, adminText, {
+        inline_keyboard: [[
+          { text: '✍️ Javob berish', callback_data: `support:reply:${ticket.id}` },
+          { text: '✅ Yopish', callback_data: `support:close:${ticket.id}` },
+        ]],
+      }).catch(() => undefined);
+    }
+    await send(token, chatId, COPY[lang].supportSent);
+    return true;
+  }
+
+  if (state.mode === 'awaiting_admin_reply' && admins().has(telegramId) && state.ticket_id) {
+    const { data: ticket } = await db.from('bot_support_tickets')
+      .select('id,user_telegram_id,user_name').eq('id', state.ticket_id).maybeSingle();
+    if (!ticket) {
+      await clearConversation(db, telegramId);
+      return false;
+    }
+    const userLang = await savedLanguage(db, Number(ticket.user_telegram_id), 'uz');
+    const reply = text.slice(0, 3500);
+    await send(
+      token,
+      Number(ticket.user_telegram_id),
+      `💬 <b>${userLang === 'ru' ? 'Ответ администратора' : userLang === 'en' ? 'Administrator reply' : 'Admin javobi'}</b>\n\n${escapeHtml(reply)}`,
+      { inline_keyboard: [[{ text: COPY[userLang].support, callback_data: 'support:start' }]] },
+    );
+    await db.from('bot_support_messages').insert({
+      ticket_id: ticket.id,
+      sender: 'admin',
+      sender_telegram_id: telegramId,
+      message_text: reply,
+    });
+    await db.from('bot_support_tickets').update({
+      status: 'answered',
+      last_admin_message_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }).eq('id', ticket.id);
+    await clearConversation(db, telegramId);
+    await send(token, chatId, COPY[lang].replyDelivered);
+    return true;
+  }
+  return false;
+}
+
 async function handleMessage(token: string, db: SupabaseClient, message: Json) {
   const chat = message.chat as Json;
   const from = message.from as Json;
@@ -194,12 +297,32 @@ async function handleMessage(token: string, db: SupabaseClient, message: Json) {
   const isPrivate = String(chat.type) === 'private';
   const t = COPY[lang];
 
+  if (await handleConversationText(
+    token,
+    db,
+    telegramId,
+    chatId,
+    String(from.first_name ?? 'Player'),
+    rawText,
+    lang,
+  )) return;
+
   if (command === '/start') {
     await processStart(db, telegramId, args[0] ?? '');
     await send(token, chatId, t.welcome, homeKeyboard(lang, telegramId));
     return;
   }
   if (command === '/help') return void await send(token, chatId, t.help, homeKeyboard(lang, telegramId));
+  if (command === '/support') {
+    await db.from('bot_conversation_state').upsert({
+      telegram_id: telegramId,
+      mode: 'awaiting_support',
+      ticket_id: null,
+      expires_at: new Date(Date.now() + 30 * 60_000).toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+    return void await send(token, chatId, t.supportPrompt);
+  }
   if (['/play', '/rating', '/profile', '/friends', '/daily'].includes(command)) {
     const parameter = command.slice(1) === 'play' ? '' : command.slice(1);
     return void await send(token, chatId, t.unknown, { inline_keyboard: [[webButton(t.game, parameter)]] });
@@ -302,6 +425,31 @@ async function handleCallback(token: string, db: SupabaseClient, callback: Json)
       { text: 'Русский', callback_data: 'lang:ru' },
       { text: 'English', callback_data: 'lang:en' },
     ]] });
+  } else if (data === 'support:start' && Number.isSafeInteger(chatId)) {
+    await db.from('bot_conversation_state').upsert({
+      telegram_id: telegramId,
+      mode: 'awaiting_support',
+      ticket_id: null,
+      expires_at: new Date(Date.now() + 30 * 60_000).toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+    await send(token, chatId, t.supportPrompt);
+  } else if (data.startsWith('support:reply:') && admins().has(telegramId) && Number.isSafeInteger(chatId)) {
+    const ticketId = data.slice('support:reply:'.length);
+    await db.from('bot_conversation_state').upsert({
+      telegram_id: telegramId,
+      mode: 'awaiting_admin_reply',
+      ticket_id: ticketId,
+      expires_at: new Date(Date.now() + 30 * 60_000).toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+    await send(token, chatId, t.adminReplyPrompt);
+  } else if (data.startsWith('support:close:') && admins().has(telegramId)) {
+    const ticketId = data.slice('support:close:'.length);
+    await db.from('bot_support_tickets').update({
+      status: 'closed',
+      updated_at: new Date().toISOString(),
+    }).eq('id', ticketId);
   } else if (data.startsWith('lang:')) {
     const next = language(data.slice(5));
     await db.from('bot_user_settings').update({ language: next, updated_at: new Date().toISOString() }).eq('telegram_id', telegramId);
@@ -372,6 +520,112 @@ async function deliverOutbox(token: string, db: SupabaseClient) {
   }
 }
 
+function tashkentRange(kind: 'daily' | 'weekly') {
+  const shifted = new Date(Date.now() + 5 * 60 * 60_000);
+  const year = shifted.getUTCFullYear();
+  const month = shifted.getUTCMonth();
+  const day = shifted.getUTCDate();
+  const todayStart = Date.UTC(year, month, day) - 5 * 60 * 60_000;
+  if (kind === 'daily') {
+    const start = todayStart - 24 * 60 * 60_000;
+    return {
+      start: new Date(start),
+      end: new Date(todayStart),
+      key: `daily:${new Date(start + 5 * 60 * 60_000).toISOString().slice(0, 10)}`,
+    };
+  }
+  const weekday = shifted.getUTCDay();
+  const daysSinceMonday = (weekday + 6) % 7;
+  const thisMonday = todayStart - daysSinceMonday * 24 * 60 * 60_000;
+  const start = thisMonday - 7 * 24 * 60 * 60_000;
+  return {
+    start: new Date(start),
+    end: new Date(thisMonday),
+    key: `weekly:${new Date(start + 5 * 60 * 60_000).toISOString().slice(0, 10)}`,
+  };
+}
+
+async function announceChampion(
+  token: string,
+  db: SupabaseClient,
+  kind: 'daily' | 'weekly',
+): Promise<{ sent: boolean; reason?: string }> {
+  const range = tashkentRange(kind);
+  const { data: previousRun } = await db.from('bot_announcement_runs')
+    .select('period_key').eq('period_key', range.key).maybeSingle();
+  if (previousRun) return { sent: false, reason: 'already_announced' };
+
+  const { data: attempts, error } = await db.from('game_attempts')
+    .select('user_id')
+    .eq('game_id', 'checkers')
+    .eq('meta->>outcome', 'win')
+    .gte('played_at', range.start.toISOString())
+    .lt('played_at', range.end.toISOString())
+    .limit(20_000);
+  if (error) throw error;
+  const counts = new Map<string, number>();
+  for (const row of attempts ?? []) {
+    counts.set(row.user_id, (counts.get(row.user_id) ?? 0) + 1);
+  }
+  const ranked = [...counts.entries()].sort(
+    ([leftId, leftWins], [rightId, rightWins]) =>
+      rightWins - leftWins || leftId.localeCompare(rightId),
+  );
+  if (!ranked.length) return { sent: false, reason: 'no_games' };
+
+  const { data: candidates } = await db.from('users')
+    .select('id,display_name,avatar,is_ai').in('id', ranked.map(([id]) => id));
+  const humans = new Map(
+    (candidates ?? []).filter((user) => user.is_ai !== true).map((user) => [user.id, user]),
+  );
+  const championEntry = ranked.find(([id]) => humans.has(id));
+  if (!championEntry) return { sent: false, reason: 'no_human_games' };
+  const [championId, wins] = championEntry;
+  const champion = humans.get(championId);
+  if (!champion) return { sent: false, reason: 'champion_missing' };
+
+  const { error: runError } = await db.from('bot_announcement_runs').insert({
+    period_key: range.key,
+    kind,
+    champion_user_id: championId,
+    wins,
+  });
+  if (runError?.code === '23505') return { sent: false, reason: 'already_announced' };
+  if (runError) throw runError;
+
+  const { data: recipients } = await db.from('bot_user_settings')
+    .select('telegram_id,language').eq('bot_blocked', false).limit(5000);
+  const name = escapeHtml(champion.display_name);
+  const avatar = escapeHtml(champion.avatar ?? '🧠');
+  const messages: Record<Lang, string> = kind === 'daily'
+    ? {
+        uz: `🌟 <b>Kecha kun o‘yinchisi</b>\n\n${avatar} <b>${name}</b>\n🏆 ${wins} ta g‘alaba\n\nTabriklaymiz!`,
+        ru: `🌟 <b>Игрок вчерашнего дня</b>\n\n${avatar} <b>${name}</b>\n🏆 Побед: ${wins}\n\nПоздравляем!`,
+        en: `🌟 <b>Yesterday’s Player</b>\n\n${avatar} <b>${name}</b>\n🏆 ${wins} wins\n\nCongratulations!`,
+      }
+    : {
+        uz: `👑 <b>O‘tgan hafta o‘yinchisi</b>\n\n${avatar} <b>${name}</b>\n🏆 ${wins} ta g‘alaba\n\nHafta chempionini tabriklaymiz!`,
+        ru: `👑 <b>Игрок прошлой недели</b>\n\n${avatar} <b>${name}</b>\n🏆 Побед: ${wins}\n\nПоздравляем чемпиона недели!`,
+        en: `👑 <b>Last Week’s Player</b>\n\n${avatar} <b>${name}</b>\n🏆 ${wins} wins\n\nCongratulations to our weekly champion!`,
+      };
+
+  for (const recipient of recipients ?? []) {
+    const lang = language(recipient.language);
+    try {
+      await send(token, Number(recipient.telegram_id), messages[lang], {
+        inline_keyboard: [[webButton(COPY[lang].game)]],
+      });
+    } catch (sendError) {
+      const message = sendError instanceof Error ? sendError.message : 'send_failed';
+      if (/blocked|chat not found|deactivated/i.test(message)) {
+        await db.from('bot_user_settings').update({ bot_blocked: true })
+          .eq('telegram_id', recipient.telegram_id);
+      }
+    }
+  }
+  return { sent: true };
+}
+
 async function setupBot(token: string) {
   const webhookUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/checkers-bot`;
   const webhookSecret = Deno.env.get('TELEGRAM_WEBHOOK_SECRET');
@@ -383,6 +637,7 @@ async function setupBot(token: string) {
     { command: 'friends', description: '👥 Do‘stlar' },
     { command: 'daily', description: '🎁 Kunlik maqsadlar' },
     { command: 'settings', description: '🔔 Xabarnomalar' },
+    { command: 'support', description: '💬 Admin bilan bog‘lanish' },
     { command: 'tournaments', description: '🏟 Turnirlar' },
     { command: 'top', description: '🏆 TOP 10' },
     { command: 'help', description: 'ℹ️ Yordam' },
@@ -421,6 +676,14 @@ Deno.serve(async (request) => {
       if (adminBody.action === 'drain') {
         await deliverOutbox(token, db);
         return json({ ok: true, data: { drained: true } });
+      }
+      if (adminBody.action === 'announcements') {
+        const shifted = new Date(Date.now() + 5 * 60 * 60_000);
+        const daily = await announceChampion(token, db, 'daily');
+        const weekly = shifted.getUTCDay() === 1
+          ? await announceChampion(token, db, 'weekly')
+          : { sent: false, reason: 'not_monday' };
+        return json({ ok: true, data: { daily, weekly } });
       }
       return json({ ok: true, data: await setupBot(token) });
     }
