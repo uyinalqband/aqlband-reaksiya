@@ -79,13 +79,14 @@ export function HomeScreen() {
     navigate('/games/checkers', { state: { startMode: mode } });
   };
 
-  const claimChest = async () => {
-    if (claiming) return;
+  const claimChest = async (): Promise<number> => {
+    if (claiming) return 0;
     setClaiming(true);
     try {
       const result = await claimDailyChest();
       setEngagement(result.hub);
       setProgression(await getProgression());
+      return result.awardedXp;
     } finally {
       setClaiming(false);
     }
@@ -256,7 +257,7 @@ export function HomeScreen() {
       </button>
 
       {engagement ? (
-        <DailyQuestCard hub={engagement} busy={claiming} onClaim={() => void claimChest()} />
+        <DailyQuestCard hub={engagement} busy={claiming} onClaim={claimChest} />
       ) : null}
     </Screen>
   );
