@@ -549,23 +549,27 @@ async function announceChampion(
   token: string,
   db: SupabaseClient,
   kind: 'daily' | 'weekly',
-): Promise<{ sent: boolean; reason?: string }> {
+): Promise<{ sent: boolean; reason?: string; delivered?: number }> {
   const range = tashkentRange(kind);
   const { data: previousRun } = await db.from('bot_announcement_runs')
     .select('period_key').eq('period_key', range.key).maybeSingle();
   if (previousRun) return { sent: false, reason: 'already_announced' };
 
-  const { data: attempts, error } = await db.from('game_attempts')
-    .select('user_id')
+  const { data: games, error } = await db.from('duels')
+    .select('host_user_id,guest_user_id,checkers_winner')
     .eq('game_id', 'checkers')
-    .eq('meta->>outcome', 'win')
-    .gte('played_at', range.start.toISOString())
-    .lt('played_at', range.end.toISOString())
+    .eq('status', 'finished')
+    .in('checkers_winner', ['host', 'guest'])
+    .gte('finished_at', range.start.toISOString())
+    .lt('finished_at', range.end.toISOString())
     .limit(20_000);
   if (error) throw error;
   const counts = new Map<string, number>();
-  for (const row of attempts ?? []) {
-    counts.set(row.user_id, (counts.get(row.user_id) ?? 0) + 1);
+  for (const row of games ?? []) {
+    const winnerId = row.checkers_winner === 'host'
+      ? row.host_user_id
+      : row.guest_user_id;
+    if (winnerId) counts.set(winnerId, (counts.get(winnerId) ?? 0) + 1);
   }
   const ranked = [...counts.entries()].sort(
     ([leftId, leftWins], [rightId, rightWins]) =>
@@ -609,12 +613,14 @@ async function announceChampion(
         en: `👑 <b>Last Week’s Player</b>\n\n${avatar} <b>${name}</b>\n🏆 ${wins} wins\n\nCongratulations to our weekly champion!`,
       };
 
+  let delivered = 0;
   for (const recipient of recipients ?? []) {
     const lang = language(recipient.language);
     try {
       await send(token, Number(recipient.telegram_id), messages[lang], {
         inline_keyboard: [[webButton(COPY[lang].game)]],
       });
+      delivered += 1;
     } catch (sendError) {
       const message = sendError instanceof Error ? sendError.message : 'send_failed';
       if (/blocked|chat not found|deactivated/i.test(message)) {
@@ -623,7 +629,11 @@ async function announceChampion(
       }
     }
   }
-  return { sent: true };
+  if (delivered === 0) {
+    await db.from('bot_announcement_runs').delete().eq('period_key', range.key);
+    return { sent: false, reason: 'delivery_failed', delivered: 0 };
+  }
+  return { sent: true, delivered };
 }
 
 async function setupBot(token: string) {
