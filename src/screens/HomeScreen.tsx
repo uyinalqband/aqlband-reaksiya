@@ -65,6 +65,17 @@ export function HomeScreen() {
     return () => window.clearTimeout(timer);
   }, [load, location.key]);
 
+  useEffect(() => {
+    if (!engagement || new URLSearchParams(location.search).get('section') !== 'daily') return;
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById('daily-goals')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [engagement, location.search]);
+
   const rating = profile?.rating ?? 1200;
   const league = getCheckersLeague(rating);
   const leagueProgress = ratingProgress(rating);
@@ -256,9 +267,11 @@ export function HomeScreen() {
         <span className="text-xl text-mist-600">›</span>
       </button>
 
-      {engagement ? (
-        <DailyQuestCard hub={engagement} busy={claiming} onClaim={claimChest} />
-      ) : null}
+      <div id="daily-goals" className="scroll-mt-4">
+        {engagement ? (
+          <DailyQuestCard hub={engagement} busy={claiming} onClaim={claimChest} />
+        ) : null}
+      </div>
     </Screen>
   );
 }

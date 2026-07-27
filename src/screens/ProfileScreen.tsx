@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type KeyboardEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Screen } from '@/components/layout/Screen';
 import { Card } from '@/components/ui/Card';
@@ -42,6 +42,7 @@ import type { ProgressionSnapshot } from '@/types/progression';
 export function ProfileScreen() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const routerLocation = useLocation();
   const user = useTelegramUser();
   const appUserId = useOnlineStore((state) => state.appUserId);
   const account = useOnlineStore((state) => state.account);
@@ -62,7 +63,16 @@ export function ProfileScreen() {
   const [skinSaving, setSkinSaving] = useState<string | null>(null);
   const [skinError, setSkinError] = useState<string | null>(null);
   const [skinStep, setSkinStep] = useState<'board' | 'pieces'>('board');
-  const [profileTab, setProfileTab] = useState<'overview' | 'friends' | 'appearance'>('overview');
+  const requestedTab = (routerLocation.state as { profileTab?: string } | null)?.profileTab;
+  const [profileTab, setProfileTab] = useState<'overview' | 'friends' | 'appearance'>(
+    requestedTab === 'friends' || requestedTab === 'appearance' ? requestedTab : 'overview',
+  );
+
+  useEffect(() => {
+    if (requestedTab === 'friends' || requestedTab === 'appearance') {
+      setProfileTab(requestedTab);
+    }
+  }, [requestedTab]);
 
   const load = useCallback(async () => {
     if (!appUserId || !isSupabaseConfigured) return;
