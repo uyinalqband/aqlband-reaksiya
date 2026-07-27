@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { HomeScreen } from '@/screens/HomeScreen';
 import { GamesScreen } from '@/screens/GamesScreen';
@@ -22,7 +22,7 @@ import { BottomNav } from '@/components/layout/BottomNav';
 import { FloatingNotification } from '@/components/layout/FloatingNotification';
 import { NotificationSync } from '@/components/layout/NotificationSync';
 import { MatchOfferOverlay } from '@/components/layout/MatchOfferOverlay';
-import { initTelegramApp, getTelegramLanguageCode } from '@/lib/telegram';
+import { initTelegramApp, getStartParam, getTelegramLanguageCode } from '@/lib/telegram';
 import { normalizeLanguage } from '@/i18n';
 import { useGameHistoryStore } from '@/store/gameHistoryStore';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -35,6 +35,30 @@ import { sfx } from '@/lib/sound';
 import { checkersMusic } from '@/lib/checkersMusic';
 
 const TAB_ROOTS=new Set(['/','/games','/leaderboard','/profile']);
+let botStartParamHandled=false;
+function BotStartRouter(){
+ const navigate=useNavigate();
+ useEffect(()=>{
+  if(botStartParamHandled)return;
+  const parameter=getStartParam()?.trim().toLowerCase();
+  if(!parameter)return;
+  botStartParamHandled=true;
+  if(parameter==='matchmaking'){
+   navigate('/games/checkers',{replace:true,state:{startMode:'rated',botLaunchAt:Date.now()}});
+  }else if(parameter==='rating'){
+   navigate('/leaderboard',{replace:true});
+  }else if(parameter==='profile'){
+   navigate('/profile',{replace:true});
+  }else if(parameter==='friends'){
+   navigate('/profile',{replace:true,state:{profileTab:'friends'}});
+  }else if(parameter==='daily'){
+   navigate('/?section=daily',{replace:true});
+  }else if(parameter==='notifications'||parameter==='settings'){
+   navigate('/notifications',{replace:true});
+  }
+ },[navigate]);
+ return null;
+}
 function AnimatedRoutes(){
  const location=useLocation();const tab=TAB_ROOTS.has(location.pathname);
  return <><div style={{paddingBottom:tab?'calc(4.5rem + env(safe-area-inset-bottom,0px))':0}}><AnimatePresence mode="wait" initial={false}><Routes location={location} key={location.pathname}>
@@ -70,5 +94,5 @@ export default function App(){
  const soundEnabled=useSettingsStore(s=>s.soundEnabled);const effectsVolume=useSettingsStore(s=>s.effectsVolume);const musicEnabled=useSettingsStore(s=>s.musicEnabled);const musicVolume=useSettingsStore(s=>s.musicVolume);
  useEffect(()=>{initTelegramApp();const language=normalizeLanguage(getTelegramLanguageCode());const failsafe=setTimeout(()=>setReady(true),4000);void Promise.all([hydrateHistory(),hydrateSettings(language),hydrateRank(),hydrateAvatar(),hydrateNotifications()]).finally(()=>{clearTimeout(failsafe);setReady(true)});return()=>clearTimeout(failsafe)},[hydrateHistory,hydrateSettings,hydrateRank,hydrateAvatar,hydrateNotifications]);
  useEffect(()=>{sfx.configure(soundEnabled,effectsVolume);checkersMusic.configure(musicEnabled,musicVolume,soundEnabled,effectsVolume);const onVisibility=()=>{if(document.hidden){sfx.suspend();checkersMusic.suspend()}else{sfx.resume();checkersMusic.resume()}};document.addEventListener('visibilitychange',onVisibility);return()=>document.removeEventListener('visibilitychange',onVisibility)},[soundEnabled,effectsVolume,musicEnabled,musicVolume]);
- if(!ready)return <Boot/>;return <BrowserRouter><div className="min-h-screen text-mist-100"><AnimatedRoutes/></div></BrowserRouter>
+ if(!ready)return <Boot/>;return <BrowserRouter><BotStartRouter/><div className="min-h-screen text-mist-100"><AnimatedRoutes/></div></BrowserRouter>
 }
