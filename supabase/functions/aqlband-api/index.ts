@@ -2470,7 +2470,7 @@ async function handleAction(
     }
 
     case 'match.offer.respond': {
-      const offerId = requireUuid(payload.offerId, 'offerId');
+      let offerId = requireUuid(payload.offerId, 'offerId');
       if (payload.accept !== true) {
         await serviceClient.from('checkers_match_offers').update({
           status: 'declined', responded_at: new Date().toISOString(),
@@ -2481,7 +2481,7 @@ async function handleAction(
       // The visible countdown remains exactly ten seconds.
       const { data: offered, error: offerReadError } = await serviceClient
         .from('checkers_match_offers')
-        .select('status,delivered_at,expires_at,duel_id')
+        .select('status,delivered_at,expires_at,duel_id,seeker_user_id')
         .eq('id', offerId)
         .eq('target_user_id', account.id)
         .maybeSingle();
@@ -2512,14 +2512,51 @@ async function handleAction(
         }
       }
 
-      const deliveredAtMs = offered.delivered_at
-        ? new Date(offered.delivered_at).getTime()
+      let effectiveOffer = offered;
+
+      // Search polling may replace an expired row with a newer offer from the
+      // same seeker while the target still sees the old card. Accept the
+      // newest equivalent offer instead of trying to revive a row that now
+      // conflicts with the unique pending-offer indexes.
+      if (offered.status === 'expired') {
+        const { data: replacement } = await serviceClient
+          .from('checkers_match_offers')
+          .select('id,status,delivered_at,expires_at,duel_id,seeker_user_id')
+          .eq('target_user_id', account.id)
+          .eq('seeker_user_id', offered.seeker_user_id)
+          .eq('status', 'pending')
+          .gt('expires_at', new Date().toISOString())
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (replacement) {
+          offerId = String(replacement.id);
+          effectiveOffer = replacement;
+          const replacementDeliveredAt = new Date();
+          const { data: claimedReplacement } = await serviceClient
+            .from('checkers_match_offers')
+            .update({
+              delivered_at: replacementDeliveredAt.toISOString(),
+              expires_at: new Date(
+                replacementDeliveredAt.getTime() + 12_000,
+              ).toISOString(),
+            })
+            .eq('id', offerId)
+            .eq('status', 'pending')
+            .select('id,status,delivered_at,expires_at,duel_id,seeker_user_id')
+            .maybeSingle();
+          if (claimedReplacement) effectiveOffer = claimedReplacement;
+        }
+      }
+
+      const deliveredAtMs = effectiveOffer.delivered_at
+        ? new Date(effectiveOffer.delivered_at).getTime()
         : Number.NaN;
       const acceptUntilMs = deliveredAtMs + 12_000;
       if (
         !Number.isFinite(deliveredAtMs) ||
         Date.now() > acceptUntilMs ||
-        !['pending', 'expired'].includes(String(offered.status))
+        !['pending', 'expired'].includes(String(effectiveOffer.status))
       ) {
         throw new ApiError(
           'Taklif muddati tugagan.',
@@ -2531,24 +2568,30 @@ async function handleAction(
       // queue.status and this request can race at the expiry boundary. The
       // target's delivered_at is authoritative, so revive an incorrectly
       // expired offer while its visible acceptance window is still valid.
-      const { error: reviveError } = await serviceClient
-        .from('checkers_match_offers')
-        .update({
-          status: 'pending',
+      if (effectiveOffer.status === 'expired') {
+        const { error: reviveError } = await serviceClient
+          .from('checkers_match_offers')
+          .update({
+            status: 'pending',
+            expires_at: new Date(acceptUntilMs).toISOString(),
+            responded_at: null,
+            seeker_notified_at: null,
+          })
+          .eq('id', offerId)
+          .eq('target_user_id', account.id)
+          .eq('status', 'expired');
+        if (reviveError) {
+          console.error('match_offer_revive_failed', reviveError);
+          throw new ApiError(
+            'Taklif boshqa taklif bilan almashtirilgan. Yangi taklifni qabul qiling.',
+            409,
+            'offer_replaced',
+          );
+        }
+      } else {
+        await serviceClient.from('checkers_match_offers').update({
           expires_at: new Date(acceptUntilMs).toISOString(),
-          responded_at: null,
-          seeker_notified_at: null,
-        })
-        .eq('id', offerId)
-        .eq('target_user_id', account.id)
-        .in('status', ['pending', 'expired']);
-      if (reviveError) {
-        console.error('match_offer_revive_failed', reviveError);
-        throw new ApiError(
-          'Taklifni faollashtirib bo‘lmadi. Qayta urinib ko‘ring.',
-          409,
-          'offer_recovery_failed',
-        );
+        }).eq('id', offerId).eq('status', 'pending');
       }
 
       const { data, error } = await serviceClient.rpc(
