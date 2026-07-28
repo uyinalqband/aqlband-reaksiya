@@ -1,0 +1,34 @@
+AQLBAND V2.3 — O‘RNATISH VA YANGILASH
+
+GITHUB
+1. ZIP faylni oching.
+2. Ichidagi barcha loyiha fayllarini repository boshiga yuklang.
+3. Eski fayllarni Replace qiling.
+4. `.env` maxfiy qiymatlarini GitHub’ga joylamang.
+5. Commit va Push qiling.
+
+SUPABASE — BU VERSIYADA MAJBURIY
+1. Supabase Dashboard → SQL Editor oynasini oching.
+2. `supabase/migrations/0023_social_retention.sql` faylining to‘liq
+   mazmunini bir marta ishga tushiring.
+3. Supabase Dashboard → Edge Functions → `aqlband-api` funksiyasini oching.
+4. `supabase/functions/aqlband-api/index.ts` faylining yangi mazmuni bilan
+   funksiyani qayta deploy qiling.
+
+CLI ishlatsangiz:
+  supabase db push
+  supabase functions deploy aqlband-api
+
+MUHIM
+- Faqat frontendni GitHub’ga yuklash yetarli emas.
+- 0023 migratsiyasi bajarilmasa emoji, presence, fon taklifi va AI ishlamaydi.
+- Edge Function qayta deploy qilinmasa yangi API buyruqlari tanilmaydi.
+- Avvalgi 0001–0022 migratsiyalar hali qo‘llanmagan bo‘lsa, ularni tartib bilan
+  qo‘llang; `supabase db push` buni avtomatik bajaradi.
+
+LOKAL TEKSHIRUV
+  npm ci
+  npm run verify
+  npm run typecheck
+  npm run lint
+  npm run build

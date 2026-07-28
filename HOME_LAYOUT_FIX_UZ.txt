@@ -1,0 +1,13 @@
+AI V2.5 — bosh sahifa joylashuvi tuzatishi
+
+GitHub’da quyidagi faylni almashtiring:
+
+src/screens/HomeScreen.tsx
+
+Natija:
+- profil sarlavhasidan keyin darhol asosiy Shashka oynasi chiqadi;
+- asosiy o‘yin oynasidan yuqorida boshqa karta qolmaydi;
+- faol o‘yinga qaytish kartasi asosiy Shashka oynasidan keyin turadi;
+- “Bugungi maqsadlar” bosh sahifaning eng pastiga ko‘chirildi.
+
+Supabase SQL va Edge Function’ni yangilash shart emas.

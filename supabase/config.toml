@@ -1,0 +1,5 @@
+[functions.aqlband-api]
+verify_jwt = false
+
+[functions.checkers-bot]
+verify_jwt = false
