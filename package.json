@@ -1,7 +1,7 @@
 {
   "name": "aqlband-v2",
   "private": true,
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "AI V2 — Shashka markazidagi strategik Telegram Mini App platformasi",
   "type": "module",
   "scripts": {
