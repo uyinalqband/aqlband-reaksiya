@@ -133,12 +133,18 @@ export async function invokePlatformApi<T>(
         signal: options.signal,
         cache: 'no-store',
       });
+      const isProxyEndpoint = endpoint.endsWith('/api/platform');
+      const isJsonResponse = candidate.headers
+        .get('content-type')
+        ?.toLowerCase()
+        .includes('application/json');
       // A missing or temporarily unreachable Pages Function can happen during
-      // a rolling deploy or when its upstream subrequest is rejected. Fall
-      // back to Supabase directly without interrupting the user.
+      // a rolling deploy. Some hosts also return an HTML error/login page with
+      // status 200, 401 or 405. Such a response must never stop the direct
+      // Supabase fallback.
       if (
-        endpoint.endsWith('/api/platform') &&
-        (candidate.status === 404 || candidate.status >= 500)
+        isProxyEndpoint &&
+        (!isJsonResponse || candidate.status === 404 || candidate.status >= 500)
       ) {
         continue;
       }
