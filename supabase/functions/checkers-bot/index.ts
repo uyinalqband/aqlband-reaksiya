@@ -582,11 +582,42 @@ async function announceChampion(
   const humans = new Map(
     (candidates ?? []).filter((user) => user.is_ai !== true).map((user) => [user.id, user]),
   );
-  const championEntry = ranked.find(([id]) => humans.has(id));
-  if (!championEntry) return { sent: false, reason: 'no_human_games' };
-  const [championId, wins] = championEntry;
-  const champion = humans.get(championId);
-  if (!champion) return { sent: false, reason: 'champion_missing' };
+  const humanRanked = ranked.filter(([id]) => humans.has(id));
+  if (!humanRanked.length) return { sent: false, reason: 'no_human_games' };
+  const wins = humanRanked[0][1];
+  const winLeaders = humanRanked.filter(([, count]) => count === wins);
+  const leaderIds = winLeaders.map(([id]) => id);
+
+  const [{ data: xpEvents }, { data: rewardClaims }] = await Promise.all([
+    db.from('xp_events')
+      .select('user_id,awarded_xp')
+      .in('user_id', leaderIds)
+      .gte('played_at', range.start.toISOString())
+      .lt('played_at', range.end.toISOString())
+      .limit(20_000),
+    db.from('reward_claims')
+      .select('user_id,xp')
+      .in('user_id', leaderIds)
+      .gte('created_at', range.start.toISOString())
+      .lt('created_at', range.end.toISOString())
+      .limit(20_000),
+  ]);
+  const dailyXp = new Map<string, number>(leaderIds.map((id) => [id, 0]));
+  for (const event of xpEvents ?? []) {
+    dailyXp.set(
+      event.user_id,
+      (dailyXp.get(event.user_id) ?? 0) + Number(event.awarded_xp ?? 0),
+    );
+  }
+  for (const reward of rewardClaims ?? []) {
+    dailyXp.set(
+      reward.user_id,
+      (dailyXp.get(reward.user_id) ?? 0) + Number(reward.xp ?? 0),
+    );
+  }
+  const bestXp = Math.max(...leaderIds.map((id) => dailyXp.get(id) ?? 0));
+  const championIds = leaderIds.filter((id) => (dailyXp.get(id) ?? 0) === bestXp);
+  const championId = championIds[0];
 
   const { error: runError } = await db.from('bot_announcement_runs').insert({
     period_key: range.key,
@@ -599,18 +630,22 @@ async function announceChampion(
 
   const { data: recipients } = await db.from('bot_user_settings')
     .select('telegram_id,language').eq('bot_blocked', false).limit(5000);
-  const name = escapeHtml(champion.display_name);
-  const avatar = escapeHtml(champion.avatar ?? '🧠');
+  const championLines = championIds.map((id) => {
+    const champion = humans.get(id);
+    const name = escapeHtml(champion?.display_name ?? 'Player');
+    const avatar = escapeHtml(champion?.avatar ?? '🧠');
+    return `${avatar} <b>${name}</b>\n🏆 ${wins} · ⚡ ${bestXp} XP`;
+  }).join('\n\n');
   const messages: Record<Lang, string> = kind === 'daily'
     ? {
-        uz: `🌟 <b>Kecha kun o‘yinchisi</b>\n\n${avatar} <b>${name}</b>\n🏆 ${wins} ta g‘alaba\n\nTabriklaymiz!`,
-        ru: `🌟 <b>Игрок вчерашнего дня</b>\n\n${avatar} <b>${name}</b>\n🏆 Побед: ${wins}\n\nПоздравляем!`,
-        en: `🌟 <b>Yesterday’s Player</b>\n\n${avatar} <b>${name}</b>\n🏆 ${wins} wins\n\nCongratulations!`,
+        uz: `🌟 <b>Kecha kun qahramoni${championIds.length > 1 ? 'lari' : ''}</b>\n\n${championLines}\n\nTabriklaymiz!`,
+        ru: `🌟 <b>${championIds.length > 1 ? 'Герои' : 'Герой'} вчерашнего дня</b>\n\n${championLines}\n\nПоздравляем!`,
+        en: `🌟 <b>Yesterday’s ${championIds.length > 1 ? 'Heroes' : 'Hero'}</b>\n\n${championLines}\n\nCongratulations!`,
       }
     : {
-        uz: `👑 <b>O‘tgan hafta o‘yinchisi</b>\n\n${avatar} <b>${name}</b>\n🏆 ${wins} ta g‘alaba\n\nHafta chempionini tabriklaymiz!`,
-        ru: `👑 <b>Игрок прошлой недели</b>\n\n${avatar} <b>${name}</b>\n🏆 Побед: ${wins}\n\nПоздравляем чемпиона недели!`,
-        en: `👑 <b>Last Week’s Player</b>\n\n${avatar} <b>${name}</b>\n🏆 ${wins} wins\n\nCongratulations to our weekly champion!`,
+        uz: `👑 <b>O‘tgan hafta qahramoni${championIds.length > 1 ? 'lari' : ''}</b>\n\n${championLines}\n\nTabriklaymiz!`,
+        ru: `👑 <b>${championIds.length > 1 ? 'Герои' : 'Герой'} прошлой недели</b>\n\n${championLines}\n\nПоздравляем!`,
+        en: `👑 <b>Last Week’s ${championIds.length > 1 ? 'Heroes' : 'Hero'}</b>\n\n${championLines}\n\nCongratulations!`,
       };
 
   let delivered = 0;
