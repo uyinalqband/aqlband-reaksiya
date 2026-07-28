@@ -2479,28 +2479,90 @@ async function handleAction(
       }
       // Allow two seconds for the accept request itself to reach the server.
       // The visible countdown remains exactly ten seconds.
-      const { data: offered } = await serviceClient
+      const { data: offered, error: offerReadError } = await serviceClient
         .from('checkers_match_offers')
-        .select('status,delivered_at,expires_at')
+        .select('status,delivered_at,expires_at,duel_id')
         .eq('id', offerId)
         .eq('target_user_id', account.id)
         .maybeSingle();
-      if (offered?.status === 'pending' && offered.delivered_at) {
-        const graceExpiry = new Date(
-          new Date(offered.delivered_at).getTime() + 12_000,
-        );
-        if (graceExpiry.getTime() > Date.now()) {
-          await serviceClient.from('checkers_match_offers').update({
-            expires_at: graceExpiry.toISOString(),
-          }).eq('id', offerId).eq('status', 'pending');
+      if (offerReadError || !offered) {
+        throw new ApiError('Taklif topilmadi.', 404, 'offer_not_found');
+      }
+
+      // Idempotent response: a successful accept whose HTTP response was lost
+      // must open the same duel when the user taps again.
+      if (offered.status === 'accepted' && offered.duel_id) {
+        const { data: existingDuel } = await serviceClient.from('duels')
+          .select('id,host_user_id,guest_user_id,host_name,guest_name,status')
+          .eq('id', offered.duel_id)
+          .maybeSingle();
+        if (
+          existingDuel &&
+          isActiveDuelStatus(existingDuel.status as DuelRow['status'])
+        ) {
+          const targetIsHost = String(existingDuel.host_user_id) === account.id;
+          return {
+            accepted: true,
+            duelId: String(existingDuel.id),
+            role: targetIsHost ? 'host' : 'guest',
+            opponentName: targetIsHost
+              ? String(existingDuel.guest_name)
+              : String(existingDuel.host_name),
+          };
         }
       }
+
+      const deliveredAtMs = offered.delivered_at
+        ? new Date(offered.delivered_at).getTime()
+        : Number.NaN;
+      const acceptUntilMs = deliveredAtMs + 12_000;
+      if (
+        !Number.isFinite(deliveredAtMs) ||
+        Date.now() > acceptUntilMs ||
+        !['pending', 'expired'].includes(String(offered.status))
+      ) {
+        throw new ApiError(
+          'Taklif muddati tugagan.',
+          409,
+          'offer_expired',
+        );
+      }
+
+      // queue.status and this request can race at the expiry boundary. The
+      // target's delivered_at is authoritative, so revive an incorrectly
+      // expired offer while its visible acceptance window is still valid.
+      const { error: reviveError } = await serviceClient
+        .from('checkers_match_offers')
+        .update({
+          status: 'pending',
+          expires_at: new Date(acceptUntilMs).toISOString(),
+          responded_at: null,
+          seeker_notified_at: null,
+        })
+        .eq('id', offerId)
+        .eq('target_user_id', account.id)
+        .in('status', ['pending', 'expired']);
+      if (reviveError) {
+        console.error('match_offer_revive_failed', reviveError);
+        throw new ApiError(
+          'Taklifni faollashtirib bo‘lmadi. Qayta urinib ko‘ring.',
+          409,
+          'offer_recovery_failed',
+        );
+      }
+
       const { data, error } = await serviceClient.rpc(
         'accept_checkers_match_offer',
         { p_offer_id: offerId, p_target_user_id: account.id },
       );
       if (error || !data) {
         const detail = String(error?.message ?? '');
+        console.error('accept_checkers_match_offer_failed', {
+          code: error?.code,
+          message: detail,
+          details: error?.details,
+          hint: error?.hint,
+        });
         if (detail.includes('player_busy')) {
           throw new ApiError(
             'O‘yinchilardan biri boshqa o‘yinga kirib bo‘lgan.',
@@ -2511,7 +2573,14 @@ async function handleAction(
         if (detail.includes('user_not_found')) {
           throw new ApiError('O‘yinchi topilmadi.', 404, 'player_not_found');
         }
-        throw new ApiError('Taklif muddati tugagan.', 409, 'offer_expired');
+        if (detail.includes('offer_expired') || detail.includes('offer_not_found')) {
+          throw new ApiError('Taklif muddati tugagan.', 409, 'offer_expired');
+        }
+        throw new ApiError(
+          `O‘yinni boshlashda server xatosi yuz berdi (${String(error?.code ?? 'unknown')}).`,
+          500,
+          'match_start_failed',
+        );
       }
       return { accepted: true, ...(data as Record<string, unknown>) };
     }
