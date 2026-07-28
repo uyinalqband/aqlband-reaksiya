@@ -1,0 +1,20 @@
+AI V2.5 — yog‘och shashka tovushi yangilanishi
+
+GitHub’da quyidagi bitta faylni aynan shu yo‘l bo‘yicha almashtiring:
+
+src/lib/checkersMusic.ts
+
+Backend, Supabase SQL va Edge Function’ni yangilash shart emas.
+
+O‘zgarishlar:
+- oddiy yurish: yumshoq yog‘och «tok»;
+- dona urish: og‘irroq «tak-tok»;
+- ketma-ket urish: mayin balandroq tembr;
+- dama chiqishi: yog‘och zarbasi va qisqa premium jarang;
+- har zarbada juda kichik tabiiy tembr farqi;
+- mavjud effekt ovozi balandligi va musiqa ducking sozlamalari saqlanadi.
+
+Tekshirish:
+
+npm install
+npm run build
