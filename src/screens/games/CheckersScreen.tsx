@@ -114,6 +114,7 @@ export function CheckersScreen() {
   const [actionBusy, setActionBusy] = useState<string | null>(null);
   const [gameError, setGameError] = useState<string | null>(null);
   const [clockNow, setClockNow] = useState(Date.now());
+  const [serverOffsetMs, setServerOffsetMs] = useState(0);
   const startHandledRef = useRef(false);
   const resultMusicPlayedRef = useRef(false);
   const [matchmaking, setMatchmaking] = useState<MatchmakingStatus | null>(null);
@@ -141,6 +142,8 @@ export function CheckersScreen() {
     return subscribeToDuel(
       duelContext.duelId,
       (result) => {
+        setServerOffsetMs(result.serverNow - Date.now());
+        setClockNow(Date.now());
         setDuel(result);
         setGameError(null);
       },
@@ -291,7 +294,6 @@ export function CheckersScreen() {
     if (typeof onlySource === 'number') setSelectedIndex(onlySource);
   }, [finished, forcedFrom, moveBusy, movesByFrom, myTurn, selectedIndex]);
 
-  const serverOffsetMs = duel ? duel.serverNow - Date.now() : 0;
   const deadlineMs = duel?.checkers_turn_deadline_at
     ? new Date(duel.checkers_turn_deadline_at).getTime()
     : duel?.game_start_at
@@ -436,12 +438,7 @@ export function CheckersScreen() {
 
 
   const startRatedMatch = useCallback(async () => {
-    if (!isSupabaseConfigured || !appUserId || queueBusy) {
-      if (!isSupabaseConfigured || !appUserId) {
-        setQueueError(t('setup.onlineRequired'));
-      }
-      return;
-    }
+    if (!isSupabaseConfigured || !appUserId || queueBusy) return;
 
     checkersMusic.unlock();
     setQueueBusy(true);
@@ -580,7 +577,12 @@ export function CheckersScreen() {
   }, [appUserId, friends.length, t]);
 
   useEffect(() => {
-    if (duelContext || startHandledRef.current) return;
+    if (
+      duelContext ||
+      startHandledRef.current ||
+      !isSupabaseConfigured ||
+      !appUserId
+    ) return;
     startHandledRef.current = true;
 
     if (requestedStartMode === 'friendly') {
@@ -590,6 +592,7 @@ export function CheckersScreen() {
     }
   }, [
     duelContext,
+    appUserId,
     openFriends,
     requestedStartMode,
     startRatedMatch,
