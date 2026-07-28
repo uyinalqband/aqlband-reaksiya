@@ -19,6 +19,7 @@ export function MatchOfferOverlay() {
   const navigate = useNavigate();
   const [offer, setOffer] = useState<PassiveMatchOffer | null>(null);
   const [busy, setBusy] = useState(false);
+  const [responseError, setResponseError] = useState<string | null>(null);
   const [now, setNow] = useState(Date.now());
   const blocked = BLOCKED.some((path) => location.pathname.startsWith(path));
 
@@ -59,11 +60,12 @@ export function MatchOfferOverlay() {
 
   const respond = async (accept: boolean) => {
     setBusy(true);
+    setResponseError(null);
     try {
       const result = await respondPassiveMatchOffer(offer.id, accept);
-      setOffer(null);
       if (accept && result.duelId && result.role) {
         navigate('/games/checkers', {
+          replace: true,
           state: makeDuelGameState({
             duelId: result.duelId,
             role: result.role,
@@ -72,7 +74,18 @@ export function MatchOfferOverlay() {
             opponentName: result.opponentName ?? offer.seekerName,
           }),
         });
+        setOffer(null);
+      } else if (accept) {
+        setResponseError('O‘yin ma’lumoti olinmadi. Qayta bosing.');
+      } else {
+        setOffer(null);
       }
+    } catch (error) {
+      setResponseError(
+        error instanceof Error
+          ? error.message
+          : 'Taklifga javob berib bo‘lmadi. Qayta urinib ko‘ring.',
+      );
     } finally {
       setBusy(false);
     }
@@ -94,6 +107,11 @@ export function MatchOfferOverlay() {
         <Button size="md" disabled={busy} onClick={() => void respond(true)}>✅ Qabul qilish</Button>
         <Button size="md" variant="secondary" disabled={busy} onClick={() => void respond(false)}>❌ Rad etish</Button>
       </div>
+      {responseError ? (
+        <p className="mt-2 rounded-xl border border-red-400/25 bg-red-500/10 px-3 py-2 text-center text-xs text-red-200">
+          {responseError}
+        </p>
+      ) : null}
     </div>
   );
 }
