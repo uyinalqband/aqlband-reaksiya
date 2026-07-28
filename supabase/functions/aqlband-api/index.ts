@@ -1212,14 +1212,14 @@ function chooseAiCheckersMove(
   // Edge Function uzoq hisoblab qolmasligi uchun butun AI qidiruvi qat’iy
   // vaqt va variant chegarasida ishlaydi. Vaqt tugasa ham legalMoves[0]
   // har doim xavfsiz zaxira yurish bo‘lib qoladi.
-  const deadline = Date.now() + 220;
-  const turns = serverCheckersTurns(board, side, deadline, 96);
+  const deadline = Date.now() + 700;
+  const turns = serverCheckersTurns(board, side, deadline, 160);
   if (turns.length === 0) return legalMoves[0];
   const cache = new Map<string, number>();
   const depth = serverCheckersCountPieces(board, 'white') +
       serverCheckersCountPieces(board, 'black') <= 10
-    ? 7
-    : 5;
+    ? 10
+    : 7;
   let bestMove = turns[0].first;
   let bestScore = side === 'white' ? -Infinity : Infinity;
   for (const turn of turns) {
@@ -1813,23 +1813,7 @@ async function finalizeRatedCheckersIfNeeded(
   }
 
   const finalized = Array.isArray(data) ? data[0] : data;
-  const result = (finalized as DuelRow | null) ?? duel;
-  if (result.opponent_type === 'ai') {
-    const { data: normalized, error: normalizeError } = await serviceClient.rpc(
-      'normalize_ai_checkers_rating',
-      { p_duel_id: duel.id },
-    );
-    if (normalizeError) {
-      throw new ApiError(
-        'AI reyting ta’sirini hisoblab bo‘lmadi. 0025 migratsiyasini tekshiring.',
-        500,
-        'ai_rating_failed',
-      );
-    }
-    const normalizedRow = Array.isArray(normalized) ? normalized[0] : normalized;
-    return (normalizedRow as DuelRow | null) ?? result;
-  }
-  return result;
+  return (finalized as DuelRow | null) ?? duel;
 }
 
 async function persistCheckersHistory(
