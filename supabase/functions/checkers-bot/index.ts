@@ -568,17 +568,45 @@ async function announceChampion(
     .select('host_user_id,guest_user_id,checkers_winner')
     .eq('game_id', 'checkers')
     .eq('status', 'finished')
-    .in('checkers_winner', ['host', 'guest'])
     .gte('finished_at', range.start.toISOString())
     .lt('finished_at', range.end.toISOString())
     .limit(20_000);
   if (error) throw error;
   const counts = new Map<string, number>();
+  const matchStats = new Map<string, {
+    games: number;
+    wins: number;
+    draws: number;
+    losses: number;
+  }>();
+  const statsFor = (userId: string) => {
+    const existing = matchStats.get(userId);
+    if (existing) return existing;
+    const created = { games: 0, wins: 0, draws: 0, losses: 0 };
+    matchStats.set(userId, created);
+    return created;
+  };
   for (const row of games ?? []) {
+    const hostId = String(row.host_user_id ?? '');
+    const guestId = String(row.guest_user_id ?? '');
+    if (!hostId || !guestId) continue;
+    if (!['host', 'guest', 'draw'].includes(String(row.checkers_winner))) continue;
+    const hostStats = statsFor(hostId);
+    const guestStats = statsFor(guestId);
+    hostStats.games += 1;
+    guestStats.games += 1;
+    if (row.checkers_winner === 'draw') {
+      hostStats.draws += 1;
+      guestStats.draws += 1;
+      continue;
+    }
     const winnerId = row.checkers_winner === 'host'
-      ? row.host_user_id
-      : row.guest_user_id;
-    if (winnerId) counts.set(winnerId, (counts.get(winnerId) ?? 0) + 1);
+      ? hostId
+      : guestId;
+    const loserId = row.checkers_winner === 'host' ? guestId : hostId;
+    statsFor(winnerId).wins += 1;
+    statsFor(loserId).losses += 1;
+    counts.set(winnerId, (counts.get(winnerId) ?? 0) + 1);
   }
   const ranked = [...counts.entries()].sort(
     ([leftId, leftWins], [rightId, rightWins]) =>
@@ -639,30 +667,53 @@ async function announceChampion(
 
   const { data: recipients } = await db.from('bot_user_settings')
     .select('telegram_id,language').eq('bot_blocked', false).limit(5000);
-  const championLines = championIds.map((id) => {
+  const championLines = (lang: Lang) => championIds.map((id) => {
     const champion = humans.get(id);
     const name = escapeHtml(champion?.display_name ?? 'Player');
     const avatar = escapeHtml(champion?.avatar ?? '🧠');
-    return `${avatar} <b>${name}</b>\n🏆 ${wins} · ⚡ ${bestXp} XP`;
+    const stats = matchStats.get(id) ?? {
+      games: wins,
+      wins,
+      draws: 0,
+      losses: 0,
+    };
+    if (lang === 'ru') {
+      return `${avatar} <b>${name}</b>\n🎮 Матчи: <b>${stats.games}</b> · ✅ Победы: <b>${stats.wins}</b>\n🤝 Ничьи: <b>${stats.draws}</b> · ❌ Поражения: <b>${stats.losses}</b>\n⚡ <b>${bestXp} XP</b>`;
+    }
+    if (lang === 'en') {
+      return `${avatar} <b>${name}</b>\n🎮 Games: <b>${stats.games}</b> · ✅ Wins: <b>${stats.wins}</b>\n🤝 Draws: <b>${stats.draws}</b> · ❌ Losses: <b>${stats.losses}</b>\n⚡ <b>${bestXp} XP</b>`;
+    }
+    return `${avatar} <b>${name}</b>\n🎮 O‘yinlar: <b>${stats.games}</b> · ✅ G‘alaba: <b>${stats.wins}</b>\n🤝 Durrang: <b>${stats.draws}</b> · ❌ Mag‘lubiyat: <b>${stats.losses}</b>\n⚡ <b>${bestXp} XP</b>`;
   }).join('\n\n');
   const messages: Record<Lang, string> = kind === 'daily'
     ? {
-        uz: `🌟 <b>Kecha kun qahramoni${championIds.length > 1 ? 'lari' : ''}</b>\n\n${championLines}\n\nTabriklaymiz!`,
-        ru: `🌟 <b>${championIds.length > 1 ? 'Герои' : 'Герой'} вчерашнего дня</b>\n\n${championLines}\n\nПоздравляем!`,
-        en: `🌟 <b>Yesterday’s ${championIds.length > 1 ? 'Heroes' : 'Hero'}</b>\n\n${championLines}\n\nCongratulations!`,
+        uz: `🌟 <b>Kecha kun qahramoni${championIds.length > 1 ? 'lari' : ''}</b>\n\n${championLines('uz')}\n\n🎉 Tabriklaymiz!`,
+        ru: `🌟 <b>${championIds.length > 1 ? 'Герои' : 'Герой'} вчерашнего дня</b>\n\n${championLines('ru')}\n\n🎉 Поздравляем!`,
+        en: `🌟 <b>Yesterday’s ${championIds.length > 1 ? 'Heroes' : 'Hero'}</b>\n\n${championLines('en')}\n\n🎉 Congratulations!`,
       }
     : {
-        uz: `👑 <b>O‘tgan hafta qahramoni${championIds.length > 1 ? 'lari' : ''}</b>\n\n${championLines}\n\nTabriklaymiz!`,
-        ru: `👑 <b>${championIds.length > 1 ? 'Герои' : 'Герой'} прошлой недели</b>\n\n${championLines}\n\nПоздравляем!`,
-        en: `👑 <b>Last Week’s ${championIds.length > 1 ? 'Heroes' : 'Hero'}</b>\n\n${championLines}\n\nCongratulations!`,
+        uz: `👑 <b>O‘tgan hafta qahramoni${championIds.length > 1 ? 'lari' : ''}</b>\n\n${championLines('uz')}\n\n🎉 Tabriklaymiz!`,
+        ru: `👑 <b>${championIds.length > 1 ? 'Герои' : 'Герой'} прошлой недели</b>\n\n${championLines('ru')}\n\n🎉 Поздравляем!`,
+        en: `👑 <b>Last Week’s ${championIds.length > 1 ? 'Heroes' : 'Hero'}</b>\n\n${championLines('en')}\n\n🎉 Congratulations!`,
       };
 
   let delivered = 0;
   for (const recipient of recipients ?? []) {
     const lang = language(recipient.language);
+    const shareText = lang === 'ru'
+      ? '🏆 Посмотрите героя дня в Checkers Online!'
+      : lang === 'en'
+        ? '🏆 See today’s hero in Checkers Online!'
+        : '🏆 Checkers Online’dagi kun qahramonini ko‘ring!';
+    const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
+      `https://t.me/${BOT_USERNAME}`,
+    )}&text=${encodeURIComponent(shareText)}`;
     try {
       await send(token, Number(recipient.telegram_id), messages[lang], {
-        inline_keyboard: [[webButton(COPY[lang].game)]],
+        inline_keyboard: [
+          [{ text: COPY[lang].share, url: shareUrl }],
+          [webButton(COPY[lang].game)],
+        ],
       });
       delivered += 1;
     } catch (sendError) {
